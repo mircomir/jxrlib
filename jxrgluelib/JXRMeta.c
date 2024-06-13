@@ -1,14 +1,14 @@
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright Â© Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 // 
-// • Redistributions of source code must retain the above copyright notice,
+// â€¢ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// â€¢ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -814,7 +814,8 @@ ERR WriteWmpDE(
                     Call(pWS->SetPos(pWS, pDE->uValueOrOffset));
                     Call(pWS->Write(pWS, pbData, pDE->uCount));
                     Call(pWS->SetPos(pWS, offPos));
-                    *pcbDataWrittenToOffset = pDE->uCount;
+                    if (pcbDataWrittenToOffset) // sanity check
+                        *pcbDataWrittenToOffset = pDE->uCount;
                 }
             }
             break;
@@ -856,7 +857,8 @@ ERR WriteWmpDE(
                         Call(PutUShort(pWS, offPos, uiShort)); // Write one at a time for endian purposes - but inefficient
                     }
                     Call(pWS->SetPos(pWS, offPos));
-                    *pcbDataWrittenToOffset = pDE->uCount * sizeof(U16);
+                    if (pcbDataWrittenToOffset) // sanity check
+                        *pcbDataWrittenToOffset = pDE->uCount * sizeof(U16);
                 }
 
             }
@@ -887,7 +889,8 @@ ERR WriteWmpDE(
                         Call(PutULong(pWS, offPos, uLong)); // Write one at a time for endian purposes - but inefficient
                     }
                     Call(pWS->SetPos(pWS, offPos));
-                    *pcbDataWrittenToOffset = pDE->uCount * sizeof(U32);
+                    if (pcbDataWrittenToOffset)  // sanity check
+                        *pcbDataWrittenToOffset = pDE->uCount * sizeof(U32);
                 }
             }
             break;

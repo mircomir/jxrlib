@@ -1,14 +1,14 @@
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright Â© Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 // 
-// • Redistributions of source code must retain the above copyright notice,
+// â€¢ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// â€¢ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -48,7 +48,9 @@ typedef struct CWMDecoderParameters {
 
     // table lookups for rotation and flip
     size_t * pOffsetX;
+    size_t cbOffsetX; // Sanity check
     size_t * pOffsetY;
+    size_t cbOffsetY; // Sanity check
 } CWMDecoderParameters;
 
 Void predCBPDec(CWMImageStrCodec *, CCodingContext *);

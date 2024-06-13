@@ -1,15 +1,15 @@
 
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright Â© Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 // 
-// • Redistributions of source code must retain the above copyright notice,
+// â€¢ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// â€¢ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -1710,13 +1710,15 @@ ERR ParsePFDEntry(
                 &pID->WMP.sDescMetadata.pvarCaption));
             assert((DPKVT_BYREF | DPKVT_UI1) == pID->WMP.sDescMetadata.pvarCaption.vt);
 
-            // Change type from C-style byte array to LPWSTR
-            assert((U8*)pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal ==
-                pID->WMP.sDescMetadata.pvarCaption.VT.pbVal);
-            assert(0 == pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16) - 1]); // Confirm null-term
-            //  make sure null term (ReadPropvar allocated enough space for this)
-            pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16)] = 0;
-            pID->WMP.sDescMetadata.pvarCaption.vt = DPKVT_LPWSTR;
+            if (!errTmp) { // sanity check
+                // Change type from C-style byte array to LPWSTR
+                assert((U8*)pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal ==
+                    pID->WMP.sDescMetadata.pvarCaption.VT.pbVal);
+                assert(0 == pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16) - 1]); // Confirm null-term
+                //  make sure null term (ReadPropvar allocated enough space for this)
+                pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16)] = 0;
+                pID->WMP.sDescMetadata.pvarCaption.vt = DPKVT_LPWSTR;
+            }
             break;
 
         case WMP_tagDocumentName:

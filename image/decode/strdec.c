@@ -1,14 +1,14 @@
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright Â© Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 // 
-// • Redistributions of source code must retain the above copyright notice,
+// â€¢ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// â€¢ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -615,9 +615,21 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
 
     PixelI * pChannel[16];
     size_t iChannel, iRow, iColumn;
-    size_t * pOffsetX = pSC->m_Dparam->pOffsetX, * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * 16, iY;
+    size_t * pOffsetX = pSC->m_Dparam->pOffsetX;
+    size_t * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * 16;
+    size_t iY;
 
     assert(cChannel <= 16);
+    // Sanity checks
+    if(!(cChannel <= 16))
+        return;
+    assert((pSC->cRow - 1) * 16 + cHeight - 1 < pSC->m_Dparam->cbOffsetY / sizeof(size_t));
+    if(!((pSC->cRow - 1) * 16 + cHeight - 1 < pSC->m_Dparam->cbOffsetY / sizeof(size_t)))
+        return;
+    assert(cWidth - 1 < pSC->m_Dparam->cbOffsetX / sizeof(size_t));
+    if(!(cWidth - 1 < pSC->m_Dparam->cbOffsetX / sizeof(size_t)))
+        return;
+    // !Sanity checks
 
     for(iChannel = 0; iChannel < cChannel; iChannel ++)
         pChannel[iChannel & 15] = pSC->a0MBbuffer[iChannel];
@@ -629,6 +641,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_8:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(U8) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     U8 * pDst = (U8 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -643,6 +659,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(U16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     U16 * pDst = (U16 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -658,6 +678,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(I16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     I16 * pDst = (I16 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -673,6 +697,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(U16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     U16 * pDst = (U16 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -687,6 +715,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(U32) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     U32 * pDst = (U32 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -702,6 +734,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(U32) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     I32 * pDst = (I32 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -717,6 +753,10 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
+                    if((iY + pOffsetX[iColumn]) * sizeof(float) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                        //assert(0);
+                        break;
+                    }
                     float * pDst = (float *)pSC->WMIBI.pv + iY + pOffsetX[iColumn];
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
@@ -1554,6 +1594,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         U16 * pDst;
 
         assert(cfExt == CF_RGB);
+        if(!(cfExt == CF_RGB)) // sanity check
+            return ICERR_ERROR;
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1577,6 +1619,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         U16 * pDst;
 
         assert(cfExt == CF_RGB);
+        if(!(cfExt == CF_RGB)) // sanity check
+            return ICERR_ERROR;
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1600,6 +1644,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         U32 * pDst;
 
         assert(cfExt == CF_RGB);
+        if(!(cfExt == CF_RGB)) // sanity check
+            return ICERR_ERROR;
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1626,7 +1672,9 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         const size_t iPos = pSC->WMII.cLeadingPadding;
         const Int iTh = (iShift > 0) ? (1 << (iShift - 1)) : 1;
         assert(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY);
-        
+        if(!(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY)) // sanity check
+            return ICERR_ERROR;
+
         if(pSC->WMII.oOrientation < O_RCW)
             for(iRow = iFirstRow; iRow < cHeight; iRow ++) {
                 iY = pOffsetY[iRow] + iPos;
@@ -2624,8 +2672,9 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     if(pII->oOrientation > O_FLIPVH) // rotated !!
         i =cStrideX, cStrideX = cStrideY, cStrideY = i;
 
-    pSC->m_Dparam->pOffsetX = (size_t *)malloc(w * sizeof(size_t));
-    if(pSC->m_Dparam->pOffsetX == NULL || w * sizeof(size_t) < w)
+    pSC->m_Dparam->cbOffsetX = w * sizeof(size_t);
+    pSC->m_Dparam->pOffsetX = (size_t *)malloc(pSC->m_Dparam->cbOffsetX);
+    if(pSC->m_Dparam->pOffsetX == NULL || pSC->m_Dparam->cbOffsetX < w)
         return ICERR_ERROR;
     /*
     consider a row in the source image. if it becomes a reversed row in the target, or a reversed (upside-down)column 
@@ -2640,8 +2689,9 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     (pSC->m_Dparam->cROIRightX - pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / ((pII->cfColorFormat == YUV_420 || pII->cfColorFormat == YUV_422) ? 2 : 1)) - 1 - i : i) * cStrideX;
     }
 
-    pSC->m_Dparam->pOffsetY = (size_t *)malloc(h * sizeof(size_t));
-    if(pSC->m_Dparam->pOffsetY == NULL || h * sizeof(size_t) < h)
+    pSC->m_Dparam->cbOffsetY = h * sizeof(size_t);
+    pSC->m_Dparam->pOffsetY = (size_t *)malloc(pSC->m_Dparam->cbOffsetY);
+    if(pSC->m_Dparam->pOffsetY == NULL || pSC->m_Dparam->cbOffsetY < h)
         return ICERR_ERROR;
     /*
     consider a column in the source image. if it becomes an upside-down column in the target, or a reversed row 
@@ -3533,6 +3583,8 @@ Int ImageStrDecDecode(
         pSC->cColumn = 0;
         initMRPtr(pSC);
         /** zero out the transform coefficients (pull this out to once per MB row) **/
+        if (pSC->p1MBbuffer[0] == NULL) // sanity check!
+            return ICERR_ERROR;
         memset(pSC->p1MBbuffer[0], 0, sizeof(PixelI) * 16 * 16 * pSC->cmbWidth);
         for (k = 1; k < pSC->m_param.cNumChannels; k++) {
             memset(pSC->p1MBbuffer[k], 0, sizeof(PixelI) * iChromaElements * pSC->cmbWidth);
