@@ -1,4 +1,8 @@
 # jxrlib
+
+### Why this fork
+The goal of this repo is to fix problems caused by corrupted JXRs.
+
 ### JPEG XR Format
 JPEG XR is a still image format based on
 technology originally developed by Mirosoft under the name HD Photo (formerly
