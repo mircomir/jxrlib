@@ -615,9 +615,21 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
 
     PixelI * pChannel[16];
     size_t iChannel, iRow, iColumn;
-    size_t * pOffsetX = pSC->m_Dparam->pOffsetX, * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * 16, iY;
+    size_t * pOffsetX = pSC->m_Dparam->pOffsetX;
+    size_t * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * 16;
+    size_t iY;
 
     assert(cChannel <= 16);
+    // Sanity checks
+    if(!(cChannel <= 16))
+        return;
+    assert((pSC->cRow - 1) * 16 + cHeight - 1 < pSC->m_Dparam->cbOffsetY / sizeof(size_t));
+    if(!((pSC->cRow - 1) * 16 + cHeight - 1 < pSC->m_Dparam->cbOffsetY / sizeof(size_t)))
+        return;
+    assert(cWidth - 1 < pSC->m_Dparam->cbOffsetX / sizeof(size_t));
+    if(!(cWidth - 1 < pSC->m_Dparam->cbOffsetX / sizeof(size_t)))
+        return;
+    // !Sanity checks
 
     for(iChannel = 0; iChannel < cChannel; iChannel ++)
         pChannel[iChannel & 15] = pSC->a0MBbuffer[iChannel];
@@ -2660,8 +2672,9 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     if(pII->oOrientation > O_FLIPVH) // rotated !!
         i =cStrideX, cStrideX = cStrideY, cStrideY = i;
 
-    pSC->m_Dparam->pOffsetX = (size_t *)malloc(w * sizeof(size_t));
-    if(pSC->m_Dparam->pOffsetX == NULL || w * sizeof(size_t) < w)
+    pSC->m_Dparam->cbOffsetX = w * sizeof(size_t);
+    pSC->m_Dparam->pOffsetX = (size_t *)malloc(pSC->m_Dparam->cbOffsetX);
+    if(pSC->m_Dparam->pOffsetX == NULL || pSC->m_Dparam->cbOffsetX < w)
         return ICERR_ERROR;
     /*
     consider a row in the source image. if it becomes a reversed row in the target, or a reversed (upside-down)column 
@@ -2676,8 +2689,9 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     (pSC->m_Dparam->cROIRightX - pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / ((pII->cfColorFormat == YUV_420 || pII->cfColorFormat == YUV_422) ? 2 : 1)) - 1 - i : i) * cStrideX;
     }
 
-    pSC->m_Dparam->pOffsetY = (size_t *)malloc(h * sizeof(size_t));
-    if(pSC->m_Dparam->pOffsetY == NULL || h * sizeof(size_t) < h)
+    pSC->m_Dparam->cbOffsetY = h * sizeof(size_t);
+    pSC->m_Dparam->pOffsetY = (size_t *)malloc(pSC->m_Dparam->cbOffsetY);
+    if(pSC->m_Dparam->pOffsetY == NULL || pSC->m_Dparam->cbOffsetY < h)
         return ICERR_ERROR;
     /*
     consider a column in the source image. if it becomes an upside-down column in the target, or a reversed row 
