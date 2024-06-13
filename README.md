@@ -2,6 +2,7 @@
 
 ### Why this fork
 The goal of this repo is to fix problems caused by corrupted JXRs.
+The decoder is tested without using the ASM X86 code part.
 
 ### JPEG XR Format
 JPEG XR is a still image format based on
