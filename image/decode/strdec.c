@@ -2054,6 +2054,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2074,6 +2076,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             break;
 
         case CF_RGBE:
+            if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                return ICERR_ERROR;
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2091,6 +2095,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         {
             PixelI * pSrcK = pSC->a0MBbuffer[3];
             PixelI iBias1 = (128 << rShiftY) / cMul, iBias2 = (((128 << rShiftUV) / cMul) >> 1);
+            if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL || pSrcK == NULL) // Sanity check!
+                return ICERR_ERROR;
 
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
@@ -2117,6 +2123,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2144,6 +2152,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             PixelI * pSrcK = pSC->a0MBbuffer[3];
             PixelI iBias1 = (32768 << rShiftY) / cMul, iBias2 = (((32768 << rShiftUV) / cMul) >> 1);
 
+            if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL || pSrcK == NULL) // Sanity check!
+                return ICERR_ERROR;
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2171,6 +2181,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2197,6 +2209,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 			{
 				PixelI * pSrcK = pSC->a0MBbuffer[3];
 	
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL || pSrcK == NULL) // Sanity check!
+                    return ICERR_ERROR;
 				for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
 						size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2225,6 +2239,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2258,6 +2274,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2290,6 +2308,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2322,6 +2342,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         switch(cfExt){
             case CF_RGB:
+                if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+                    return ICERR_ERROR;
                 for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                     for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                         size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2352,7 +2374,9 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         const size_t iPos = pSC->WMII.cLeadingPadding;
         Bool bBW; 
         U8 cByte, cShift;
-        assert(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY);        
+        assert(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY);
+        if(pSrcY == NULL) // Sanity check!
+            return ICERR_ERROR;
 
         if(pSC->WMII.oOrientation < O_RCW){
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
@@ -2377,7 +2401,9 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         U16 * pDst;
 
         offset = (16 << rShiftY) / cMul;
-        
+
+        if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+            return ICERR_ERROR;
         for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                 size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2394,6 +2420,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         offset = (32 << rShiftY) / cMul;
         
+        if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+            return ICERR_ERROR;
         for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                 size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
@@ -2411,6 +2439,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
         offset = (512 << rShiftY) / cMul;
         
+        if(pSrcY == NULL || pSrcU == NULL || pSrcV == NULL) // Sanity check!
+            return ICERR_ERROR;
         for(iRow = iFirstRow; iRow < cHeight; iRow += tScale){
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                 size_t iPos = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf];
