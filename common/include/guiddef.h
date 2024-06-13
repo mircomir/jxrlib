@@ -170,6 +170,10 @@ typedef FMTID *LPFMTID;
 #define _SYS_GUID_OPERATORS_
 #include <string.h>
 
+#ifdef __APPLE__ // fix compilation error under macOS
+#include <wchar.h>
+#endif
+
 // Faster (but makes code fatter) inline version...use sparingly
 #ifdef __cplusplus
 __inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)

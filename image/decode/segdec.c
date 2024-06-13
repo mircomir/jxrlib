@@ -52,6 +52,10 @@ static Int DecodeSignificantAbsLevel (struct CAdaptiveHuffman *pAHexpt, BitIOInf
 //================================================================
 // Memory access functions
 //================================================================
+#ifdef __APPLE__ // fix compilation error under macOS
+extern U32 _byteswap_ulong(U32 bits);
+#endif
+
 static U32 _FORCEINLINE _load4(void* pv)
 {
 #ifdef _BIG__ENDIAN_
