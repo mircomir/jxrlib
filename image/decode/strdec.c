@@ -641,7 +641,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_8:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U8) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(U8) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -659,7 +659,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -678,7 +678,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(I16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(I16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -697,7 +697,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U16) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -715,7 +715,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U32) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -734,7 +734,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U32) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -753,7 +753,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(float) > pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn]) * sizeof(float) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -927,8 +927,24 @@ Int outputMBRow(CWMImageStrCodec * pSC)
     const U8 nLen = pSC->WMISCP.nLenMantissaOrShift;
     const I8 nExpBias = pSC->WMISCP.nExpBias;
     size_t iRow, iColumn, iIdx;
-    size_t * pOffsetX = pSC->m_Dparam->pOffsetX, * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * (cfExt == YUV_420 ? 8 : 16), iY;
+    size_t * pOffsetX = pSC->m_Dparam->pOffsetX;
+    size_t * pOffsetY = pSC->m_Dparam->pOffsetY + (pSC->cRow - 1) * (cfExt == YUV_420 ? 8 : 16);
+    size_t iY;
 
+    // Sanity checks
+    // NOTE: pDst overflow should also be checked similarly to how done in outputNChannel()
+#define OffsetY_SanityCheck(a) \
+    if((pSC->cRow - 1) * (cfExt == YUV_420 ? 8 : 16) + (a) > pSC->m_Dparam->cbOffsetY / sizeof(size_t)) \
+        return ICERR_ERROR;
+
+#define OffsetX_SanityCheck(a) \
+    if((a) > pSC->m_Dparam->cbOffsetX / sizeof(size_t)) \
+        return ICERR_ERROR;
+
+#define Offsets_SanityCheck(x, y) \
+    OffsetY_SanityCheck(y); \
+    OffsetX_SanityCheck(x)
+    // !Sanity checks
 
     if (pSC->m_pNextSC) {
         assert (pSC->m_param.bScaledArith == pSC->m_pNextSC->m_param.bScaledArith);  // will be relaxed later
@@ -1035,8 +1051,11 @@ Int outputMBRow(CWMImageStrCodec * pSC)
             PixelI r, g, b, a;
 
             if (pSC->m_pNextSC && pSC->WMISCP.uAlphaMode > 0) { // RGBA
+                Offsets_SanityCheck(cWidth, cHeight);
 
                 pA = pSC->m_pNextSC->a0MBbuffer[0];
+                if(pA == NULL) // Sanity check!
+                    return ICERR_ERROR;
 
                 if (pSC->m_param.bScaledArith == FALSE) {
                     for(iRow = iFirstRow; iRow < cHeight; iRow ++)
@@ -1123,7 +1142,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 				PixelI y0, y1, u, v;
 				// const ORIENTATION oO = pSC->WMII.oOrientation;
 				// const size_t i0 = ((oO > O_FLIPV && oO <= O_RCW_FLIPVH) ? 1 : 0), i1 = 1 - i0;
-	
+                Offsets_SanityCheck(cWidth >> 1, cHeight);
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow ++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn += 2){
 						iIdx = ((iColumn >> 4) << 7) + idxCC[iRow][(iColumn >> 1) & 7];
@@ -1148,7 +1168,9 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 				const size_t iS4[8][4] = {{0, 1, 2, 3}, {2, 3, 0, 1}, {1, 0, 3, 2}, {3, 2, 1, 0}, {1, 3, 0, 2}, {3, 1, 2, 0}, {0, 2, 1, 3}, {2, 0, 3, 1}};
 				const ORIENTATION oO = pSC->WMII.oOrientation;
 				const size_t i0 = iS4[oO][0], i1 = iS4[oO][1], i2 = iS4[oO][2], i3 = iS4[oO][3];
-	
+
+                Offsets_SanityCheck(cWidth >> 1, cHeight >> 1);
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow += 2){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> 1]; iColumn < cWidth; iColumn += 2){
 						iIdx = ((iColumn >> 4) << 6) + idxCC_420[iRow >> 1][(iColumn >> 1) & 7];
@@ -1173,7 +1195,11 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 			{
 				PixelI c, m, y, k;
 				PixelI * pK = pSC->a0MBbuffer[3];
-	
+
+                Offsets_SanityCheck(cWidth, cHeight);
+                if(pK == NULL) // Sanity check!
+                    return ICERR_ERROR;
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn++){
 						iIdx = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15];
@@ -1197,7 +1223,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGBE:
 			{
 				PixelI r, g, b;
-				
+                Offsets_SanityCheck(cWidth, cHeight);
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow ++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
 							iIdx = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15];
@@ -1227,6 +1254,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
         {
             PixelI r, g, b;
+            Offsets_SanityCheck(cWidth, cHeight);
+
 			if (pSC->m_param.bScaledArith == FALSE) {
 				for(iRow = iFirstRow; iRow < cHeight; iRow ++)
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1277,7 +1306,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 				PixelI y0, y1, u, v;
 				const ORIENTATION oO = pSC->WMII.oOrientation;
 				const size_t i0 = ((oO == O_FLIPH || oO == O_FLIPVH || oO == O_RCW_FLIPV || oO == O_RCW_FLIPVH) ? 1 : 0), i1 = 1 - i0;
-	
+                Offsets_SanityCheck(cWidth >> 1, cHeight);
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow ++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn += 2){
 						iIdx = ((iColumn >> 4) << 7) + idxCC[iRow][(iColumn >> 1) & 7];
@@ -1312,7 +1342,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 				const size_t iS4[8][4] = {{0, 1, 2, 3}, {2, 3, 0, 1}, {1, 0, 3, 2}, {3, 2, 1, 0}, {1, 3, 0, 2}, {3, 1, 2, 0}, {0, 2, 1, 3}, {2, 0, 3, 1}};
 				const ORIENTATION oO = pSC->WMII.oOrientation;
 				const size_t i0 = iS4[oO][0], i1 = iS4[oO][1], i2 = iS4[oO][2], i3 = iS4[oO][3];
-	
+                Offsets_SanityCheck(cWidth >> 1, cHeight >> 1);
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow += 2){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> 1]; iColumn < cWidth; iColumn += 2){
 						iIdx = ((iColumn >> 3) << 6) + idxCC[iRow][(iColumn >> 1) & 7];
@@ -1353,7 +1384,10 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 				PixelI * pK = pSC->a0MBbuffer[3];
 				const PixelI iBias1 = (32768 >> nLen) << iShift;
 				const PixelI iBias2 = iBias - iBias1;
-	
+                Offsets_SanityCheck(cWidth, cHeight);
+                if(pK == NULL) // Sanity check!
+                    return ICERR_ERROR;
+
 				for(iRow = iFirstRow; iRow < cHeight; iRow++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn++){
 						iIdx = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15];
@@ -1386,7 +1420,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
         {
             PixelI r, g, b;
-            
+            Offsets_SanityCheck(cWidth, cHeight);
+
             for(iRow = iFirstRow; iRow < cHeight; iRow ++)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
                     iIdx = ((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15];
@@ -1413,6 +1448,9 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 			{
 				PixelI c, m, y, k;
 				PixelI * pK = pSC->a0MBbuffer[3];
+                Offsets_SanityCheck(cWidth, cHeight);
+                if(pK == NULL) // Sanity check!
+                    return ICERR_ERROR;
 	
 				for(iRow = iFirstRow; iRow < cHeight; iRow++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn++){
@@ -1445,6 +1483,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
         {
             PixelI r, g, b;
+            Offsets_SanityCheck(cWidth, cHeight);
             
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1483,6 +1522,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
 			{
 				PixelI r, g, b;
+                Offsets_SanityCheck(cWidth, cHeight);
 				
 				for(iRow = iFirstRow; iRow < cHeight; iRow ++){
 					for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1522,6 +1562,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
         {
             PixelI r, g, b;
+            Offsets_SanityCheck(cWidth, cHeight);
             
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1560,6 +1601,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         case CF_RGB:
         {
             PixelI r, g, b;
+            Offsets_SanityCheck(cWidth, cHeight);
             
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1596,6 +1638,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         assert(cfExt == CF_RGB);
         if(!(cfExt == CF_RGB)) // sanity check
             return ICERR_ERROR;
+        Offsets_SanityCheck(cWidth, cHeight);
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1621,6 +1664,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         assert(cfExt == CF_RGB);
         if(!(cfExt == CF_RGB)) // sanity check
             return ICERR_ERROR;
+        Offsets_SanityCheck(cWidth, cHeight);
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1646,6 +1690,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         assert(cfExt == CF_RGB);
         if(!(cfExt == CF_RGB)) // sanity check
             return ICERR_ERROR;
+        Offsets_SanityCheck(cWidth, cHeight);
 
         for(iRow = iFirstRow; iRow < cHeight; iRow ++)
             for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
@@ -1674,6 +1719,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         assert(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY);
         if(!(cfExt == Y_ONLY && pSC->m_param.cfColorFormat == Y_ONLY)) // sanity check
             return ICERR_ERROR;
+        Offsets_SanityCheck(cWidth, cHeight);
 
         if(pSC->WMII.oOrientation < O_RCW)
             for(iRow = iFirstRow; iRow < cHeight; iRow ++) {
@@ -1711,15 +1757,18 @@ Int outputMBRow(CWMImageStrCodec * pSC)
         const CWMImageInfo* pII = &pSC->WMII;
 
 #define fixupFullSize(type, nCh) \
-for(iRow = iFirstRow; iRow < cHeight; iRow ++) {\
-    size_t iOffsetY;\
-    for(iColumn = iFirstColumn, iOffsetY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){\
-        type *pT = (type*)(U8 *)pSC->WMIBI.pv + iOffsetY + pOffsetX[iColumn];\
-        pT[2] = pT[1] = pT[0]; \
-        pT += nCh; \
+    Offsets_SanityCheck(cWidth, cHeight); \
+    for(iRow = iFirstRow; iRow < cHeight; iRow ++) {\
+        size_t iOffsetY;\
+        for(iColumn = iFirstColumn, iOffsetY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){\
+            if(iOffsetY + pOffsetX[iColumn] * sizeof(type) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) /* sanity check */ \
+                return ICERR_ERROR;\
+            type *pT = (type*)(U8 *)pSC->WMIBI.pv + iOffsetY + pOffsetX[iColumn];\
+            pT[2] = pT[1] = pT[0]; \
+            pT += nCh; \
+        } \
     } \
-} \
-break
+    break
 
         switch (pII->bdBitDepth)
         {
@@ -1747,6 +1796,10 @@ break
         }
     }
 #endif
+
+#undef OffsetY_SanityCheck
+#undef OffsetX_SanityCheck
+#undef Offsets_SanityCheck
 
     return ICERR_OK;
 }
