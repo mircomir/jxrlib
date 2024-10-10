@@ -52,7 +52,7 @@ static Int DecodeSignificantAbsLevel (struct CAdaptiveHuffman *pAHexpt, BitIOInf
 //================================================================
 // Memory access functions
 //================================================================
-#ifdef __APPLE__ // fix compilation error under macOS
+#if defined(__unix__) || defined(__APPLE__) // fix compilation error under macOS and Linux
 extern U32 _byteswap_ulong(U32 bits);
 #endif
 
@@ -359,6 +359,9 @@ static Void DecodeCBP(CWMImageStrCodec * pSC, CCodingContext *pContext)
 
 Int _FORCEINLINE DecodeSignificantRun (Int iMaxRun, struct CAdaptiveHuffman *pAHexpt, BitIOInfo* pIO)
 {
+    if (iMaxRun < 0 || iMaxRun > 14) { // oss-fuzz issue 372547401
+        return 0;
+    }
     Int iIndex;
     static const Int aRemap[] = {1,2,3,5,7,   1,2,3,5,7,   /*1,2,3,4,6,  */1,2,3,4,5 };
     Int iBin = gSignificantRunBin[iMaxRun];

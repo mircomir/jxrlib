@@ -170,7 +170,7 @@ typedef FMTID *LPFMTID;
 #define _SYS_GUID_OPERATORS_
 #include <string.h>
 
-#ifdef __APPLE__ // fix compilation error under macOS
+#if defined(__unix__) || defined(__APPLE__) // fix compilation error under macOS and Linux
 #include <wchar.h>
 #endif
 
