@@ -359,7 +359,7 @@ static Void DecodeCBP(CWMImageStrCodec * pSC, CCodingContext *pContext)
 
 Int _FORCEINLINE DecodeSignificantRun (Int iMaxRun, struct CAdaptiveHuffman *pAHexpt, BitIOInfo* pIO)
 {
-    if (iMaxRun < 0 || iMaxRun > 14) { // oss-fuzz issue 372547401
+    if (iMaxRun < 0 || iMaxRun > 14) { // sanity check!
         return 0;
     }
     Int iIndex;
