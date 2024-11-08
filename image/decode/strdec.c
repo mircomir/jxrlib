@@ -2745,6 +2745,8 @@ Int initLookupTables(CWMImageStrCodec* pSC)
             break;
 
         default:
+            if(pII->bdBitDepth < BD_1 || pII->bdBitDepth >= BDB_MAX)
+                return ICERR_ERROR;
             cStrideX = (pII->cBitsPerUnit >> 3) / cbChannels[pII->bdBitDepth];
             break;
     }
