@@ -2689,8 +2689,10 @@ Int StrIODecTerm(CWMImageStrCodec* pSC)
 {
     detachISRead(pSC, pSC->pIOHeader);
 
-    free(pSC->m_ppBitIO);
-    free(pSC->pIndexTable);
+    if(pSC->m_ppBitIO != NULL)
+        free(pSC->m_ppBitIO);
+    if(pSC->pIndexTable != NULL)
+        free(pSC->pIndexTable);
 
     return 0;
 }
@@ -3130,7 +3132,7 @@ Int ReadWMIHeader(
 // 11 some other parameters
     bAbbreviatedHeader = (Bool) getBit32_SB(pSB, 1); // short words for size and tiles
     pSCP->bdBitDepth = (BITDEPTH) getBit32_SB(pSB, 1); // long word
-pSCP->bdBitDepth = BD_LONG; // remove when optimization is done
+    pSCP->bdBitDepth = BD_LONG; // remove when optimization is done
     bInscribed = (Bool) getBit32_SB(pSB, 1); // windowing
     pSC->bTrimFlexbitsFlag = (Bool) getBit32_SB(pSB, 1); // trim flexbits flag
     bTileStretch = (Bool) getBit32_SB(pSB, 1); // tile stretching flag
