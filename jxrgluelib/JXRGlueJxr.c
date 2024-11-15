@@ -1550,6 +1550,7 @@ ERR ParsePFDEntry(
     {
         case WMP_tagPixelFormat:
         {
+            FailIf(16 != uCount, WMP_errUnsupportedFormat);
             unsigned char *pGuid = (unsigned char *) &pID->guidPixFormat;
             /** following code is endian-agnostic **/
             Call(GetULong(pWS, uValue, (U32 *)pGuid));
