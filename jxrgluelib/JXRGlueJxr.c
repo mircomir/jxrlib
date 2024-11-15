@@ -1577,10 +1577,12 @@ ERR ParsePFDEntry(
 
         case WMP_tagImageWidth:
             FailIf(0 == uValue, WMP_errUnsupportedFormat);
+            pID->uWidth = uValue; // it will be discarded later because the WMI info are used instead (the default implementation discarded this value)
             break;
 
         case WMP_tagImageHeight:
             FailIf(0 == uValue, WMP_errUnsupportedFormat);
+            pID->uHeight = uValue; // it will be discarded later because the WMI info are used instead (the default implementation discarded this value)
             break;
 
         case WMP_tagImageOffset:
@@ -1781,6 +1783,10 @@ ERR ParsePFD(
     }
 
     pID->WMP.bHasAlpha = ((pID->WMP.bHasAlpha) && (pID->WMP.wmiDEMisc.uAlphaOffset != 0) && (pID->WMP.wmiDEMisc.uAlphaByteCount != 0));//has planar alpha
+
+    // I want a valid TIFF IFD (Sanity check)
+    if(pID->uWidth == 0 || pID->uHeight == 0)
+        err = WMP_errUnsupportedFormat;
 
 Cleanup:
     return err;
