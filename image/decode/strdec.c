@@ -2689,8 +2689,10 @@ Int StrIODecTerm(CWMImageStrCodec* pSC)
 {
     detachISRead(pSC, pSC->pIOHeader);
 
-    free(pSC->m_ppBitIO);
-    free(pSC->pIndexTable);
+    if(pSC->m_ppBitIO != NULL)
+        free(pSC->m_ppBitIO);
+    if(pSC->pIndexTable != NULL)
+        free(pSC->pIndexTable);
 
     return 0;
 }
