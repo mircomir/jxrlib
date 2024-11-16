@@ -1559,7 +1559,7 @@ ERR ParsePFDEntry(
             Call(pWS->Read(pWS, pGuid + 8, 8));
 
             PI.pGUIDPixFmt = &pID->guidPixFormat;
-            PixelFormatLookup(&PI, LOOKUP_FORWARD);
+            Call(PixelFormatLookup(&PI, LOOKUP_FORWARD));
 
             pID->WMP.bHasAlpha = !!(PI.grBit & PK_pixfmtHasAlpha);
             pID->WMP.wmiI.cBitsPerUnit = PI.cbitUnit;

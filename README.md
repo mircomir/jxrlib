@@ -1,8 +1,11 @@
 # jxrlib
 
-### Why this fork
-The goal of this repo is to fix problems caused by corrupted JXRs.
-The decoder is tested without using the ASM X86 code part.
+### About this fork
+The goal of this project is to fix problems caused by corrupted JXRs. This was 
+created experimentally after including the JXR plugin in the KImageFormats on 
+oss-fuzz as I was unable to find a maintained JXR library.
+Although it is a little-known format, it is currently supported by Windows and 
+other Microsoft programs for both reading and writing.
 
 ### JPEG XR Format
 JPEG XR is a still image format based on
