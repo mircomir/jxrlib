@@ -691,7 +691,18 @@ static _FORCEINLINE Int DecodeCoeffs (CWMImageStrCodec * pSC, CCodingContext *pC
             if (pIO != pIOFL)
                 readIS_L2(pSC, pIOFL);
 
-            iQP = (pSC->m_param.bTranscode ? 1 : pTile->pQuantizerHP[iPlanes > 1 ? i : (iBlock > 3 ? (cf == YUV_420 ? iBlock - 3 : iBlock / 2 - 1) : 0)][pSC->MBInfo.iQIndexHP].iQP);
+            // sanity check
+            int idx0 = iPlanes > 1 ? i : (iBlock > 3
+                                              ? (cf == YUV_420
+                                                     ? iBlock - 3
+                                                     : iBlock / 2 - 1)
+                                              : 0);
+            if (pSC->m_param.bTranscode)
+                iQP = 1;
+            else if (pTile->pQuantizerHP[idx0])
+                iQP = pTile->pQuantizerHP[idx0][pSC->MBInfo.iQIndexHP].iQP;
+            else
+                return ICERR_ERROR;
 
             for (iSubblock = 0; iSubblock < 4; iSubblock++, iIndex++, iCBPCY >>= 1) {
                 pCoeffs = pSC->p1MBbuffer[i] + blkOffset[iIndex & 0xf];
