@@ -948,6 +948,8 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
     if (pSC->m_pNextSC) {
         assert (pSC->m_param.bScaledArith == pSC->m_pNextSC->m_param.bScaledArith);  // will be relaxed later
+        if(pSC->m_param.bScaledArith != pSC->m_pNextSC->m_param.bScaledArith)
+            return ICERR_ERROR;
     }
 
     // guard output buffer
