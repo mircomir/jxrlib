@@ -1550,6 +1550,7 @@ ERR ParsePFDEntry(
     {
         case WMP_tagPixelFormat:
         {
+            FailIf(WMP_typBYTE != uType, WMP_errUnsupportedFormat);
             FailIf(16 != uCount, WMP_errUnsupportedFormat);
             unsigned char *pGuid = (unsigned char *) &pID->guidPixFormat;
             /** following code is endian-agnostic **/
@@ -1576,11 +1577,13 @@ ERR ParsePFDEntry(
             break;
 
         case WMP_tagImageWidth:
+            FailIf(1 != uCount, WMP_errUnsupportedFormat);
             FailIf(0 == uValue, WMP_errUnsupportedFormat);
             pID->uWidth = uValue; // it will be discarded later because the WMI info are used instead (the default implementation discarded this value)
             break;
 
         case WMP_tagImageHeight:
+            FailIf(1 != uCount, WMP_errUnsupportedFormat);
             FailIf(0 == uValue, WMP_errUnsupportedFormat);
             pID->uHeight = uValue; // it will be discarded later because the WMI info are used instead (the default implementation discarded this value)
             break;
