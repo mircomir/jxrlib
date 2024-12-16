@@ -674,6 +674,7 @@ ERR ReadBinaryData(__in_ecount(1) struct WMPStream* pWS,
     ERR err = WMP_errSuccess;
     U8 *pbData = NULL;
 
+    Call(uCount > ((U32)-1) - 2 ? WMP_errFail : WMP_errSuccess);
     Call(PKAlloc((void **) &pbData, (size_t)uCount + 2)); // Allocate buffer to store data with space for an added ascii or unicode null
     if (uCount <= 4)
     {
