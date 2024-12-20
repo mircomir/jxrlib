@@ -910,6 +910,12 @@ Int outputMBRowAlpha(CWMImageStrCodec * pSC)
     return ICERR_OK;
 }
 
+// Sanity checks
+#define Ptr_SanityCheck(WMIBI, pDst, T) \
+    if((pDst) > (T*)((U8*)WMIBI.pv + WMIBI.cbStride * WMIBI.cLine - 1 - (sizeof(T) - 1))) \
+        return ICERR_ERROR
+// !Sanity checks
+
 Int outputMBRow(CWMImageStrCodec * pSC)
 {
     const COLORFORMAT cfExt = (pSC->m_param.cfColorFormat == Y_ONLY ? Y_ONLY : pSC->WMII.cfColorFormat);
@@ -932,14 +938,13 @@ Int outputMBRow(CWMImageStrCodec * pSC)
     size_t iY;
 
     // Sanity checks
-    // NOTE: pDst overflow should also be checked similarly to how done in outputNChannel()
 #define OffsetY_SanityCheck(a) \
     if((pSC->cRow - 1) * (cfExt == YUV_420 ? 8 : 16) + (a) > pSC->m_Dparam->cbOffsetY / sizeof(size_t)) \
-        return ICERR_ERROR;
+        return ICERR_ERROR
 
 #define OffsetX_SanityCheck(a) \
     if((a) > pSC->m_Dparam->cbOffsetX / sizeof(size_t)) \
-        return ICERR_ERROR;
+        return ICERR_ERROR
 
 #define Offsets_SanityCheck(x, y) \
     OffsetY_SanityCheck(y); \
@@ -982,7 +987,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                     for(iColumn = iFirstColumn; iColumn < cWidth; iColumn ++){
                         for(iChannel = 0; iChannel < cChannel; iChannel ++){
                             PixelI p = pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]];
-
+                            Ptr_SanityCheck(pSC->WMIBI, pRow, I32);
                             *pRow++ = p;
                         }
                     }
@@ -1003,7 +1008,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                         y0 = pY[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]];
                         y1 = pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow][(iColumn + 1) & 15]];
-
+                        Ptr_SanityCheck(pSC->WMIBI, pRow + 3, I32);
                         pRow[0] = u, pRow[1] = y0, pRow[2] = v, pRow[3] = y1;
                         pRow += 4;
                     }
@@ -1027,7 +1032,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         y1 = pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow][(iColumn + 1) & 15]];
                         y2 = pY[((iColumn >> 4) << 8) + idxCC[iRow + 1][iColumn & 15]];
                         y3 = pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow + 1][(iColumn + 1) & 15]];
-
+                        Ptr_SanityCheck(pSC->WMIBI, pRow + 5, I32);
                         pRow[0] = y0, pRow[1] = y1, pRow[2] = y2, pRow[3] = y3, pRow[4] = u, pRow[5] = v;
                         pRow += 6;
                     }
@@ -1070,6 +1075,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                             _ICC(r, g, b);
 
                             pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                            Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                             if ((g | b | r | a) & ~0xff)
                                 pDst[iR] = _CLIP8(r), pDst[1] = _CLIP8(g), pDst[iB] = _CLIP8(b), pDst[3] = _CLIP8(a);
                             else
@@ -1088,6 +1094,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                             g >>= iShift, b >>= iShift, r >>= iShift, a >>= iShift;
                             pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                            Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                             if ((g | b | r | a) & ~0xff)
                                 pDst[iR] = _CLIP8(r), pDst[1] = _CLIP8(g), pDst[iB] = _CLIP8(b), pDst[3] = _CLIP8(a);
                             else
@@ -1106,6 +1113,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                             _ICC(r, g, b);
 
                             pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                            Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U8);
                             if ((g | b | r) & ~0xff)
                                 pDst[iR] = _CLIP8(r), pDst[1] = _CLIP8(g), pDst[iB] = _CLIP8(b);
                             else
@@ -1123,6 +1131,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                             g >>= iShift, b >>= iShift, r >>= iShift;
                             pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                            Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U8);
                             if ((g | b | r) & ~0xff)
                                 pDst[iR] = _CLIP8(r), pDst[1] = _CLIP8(g), pDst[iB] = _CLIP8(b);
                             else
@@ -1155,6 +1164,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         y1 = ((pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow][(iColumn + 1) & 15]] + iBias) >> iShift);
 
                         pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> 1] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                         if ((y0 | y1 | u | v) & ~0xff)//UYVY
                             pDst[0] = _CLIP8(u), pDst[1] = _CLIP8(y0), pDst[2] = _CLIP8(v), pDst[3] = _CLIP8(y1);
                         else
@@ -1184,6 +1194,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         y3 = ((pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow + 1][(iColumn + 1) & 15]] + iBias) >> iShift);
 
                         pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> 1] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + max(5, max(i0, max(i1, max(i2, i3)))), U8);
                         if ((y0 | y1 | y2 | y3 | u | v) & ~0xff)
                             pDst[i0] = _CLIP8(y0), pDst[i1] = _CLIP8(y1), pDst[i2] = _CLIP8(y2), pDst[i3] = _CLIP8(y3), pDst[4] = _CLIP8(u), pDst[5] = _CLIP8(v);
                         else
@@ -1213,6 +1224,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         c >>= iShift, m >>= iShift, y >>= iShift, k >>= iShift;
 
                         pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                         if ((c | m | y | k) & ~0xff)
                             pDst[0] = _CLIP8(c), pDst[1] = _CLIP8(m), pDst[2] = _CLIP8(y), pDst[3] = _CLIP8(k);
                         else
@@ -1236,7 +1248,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                             _ICC(r, g, b);
 
                             pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
-
+                            Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                             inverseConvertRGBE (r >> iShift, g >> iShift, b >> iShift, pDst, pDst + 1, pDst + 2, pDst + 3);
                         }
                 }
@@ -1270,7 +1282,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         g <<= nLen, b <<= nLen, r <<= nLen;
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U16);
                         if ((g | b | r) & ~0xffff)
                             pDst[0] = _CLIPU16(r),  pDst[1] = _CLIPU16(g), pDst[2] = _CLIPU16(b);
                         else
@@ -1288,6 +1300,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                         g = (g >> iShift) << nLen, b = (b >> iShift) << nLen, r = (r >> iShift) << nLen;
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U16);
                         if ((g | b | r) & ~0xffff)
                             pDst[0] = _CLIPU16(r),  pDst[1] = _CLIPU16(g), pDst[2] = _CLIPU16(b);
                         else
@@ -1319,6 +1332,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         y1 = ((pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow][(iColumn + 1) & 15]] + iBias) >> iShift) << nLen;
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> 1] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + max(3, max(i0, i1)), U16);
                         if ((y0 | y1 | u | v) & ~0xffff)
                             {
                                 pDst[i0] = _CLIPU16(u);
@@ -1357,6 +1371,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         y3 = ((pY[(((iColumn + 1) >> 4) << 8) + idxCC[iRow + 1][(iColumn + 1) & 15]] + iBias) >> iShift) << nLen;
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> 1] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + max(5, max(i0, max(i1, max(i2, i3)))), U16);
                         if ((y0 | y1 | y2 | y3 | u | v) & ~0xffff)
                             {
                                 pDst[i0] = _CLIPU16(y0);
@@ -1401,6 +1416,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         c = (c >> iShift) << nLen, m = (m >> iShift) << nLen, y = (y >> iShift) << nLen, k = (k >> iShift) << nLen;
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U16);
                         if ((c | m | y | k) & ~0xffff)
                             pDst[0] = _CLIPU16(c), pDst[1] = _CLIPU16(m), pDst[2] = _CLIPU16(y), pDst[3] = _CLIPU16(k);
                         else
@@ -1435,6 +1451,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                     r = (r >> iShift) << nLen, g = (g >> iShift) << nLen, b = (b >> iShift) << nLen;
 
                     pDst = (I16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 2, I16);
                     pDst[0] = _CLIP16(r), pDst[1] = _CLIP16(g), pDst[2] = _CLIP16(b);
                 }
             break;
@@ -1465,6 +1482,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         c = (c >> iShift) << nLen, m = (m >> iShift) << nLen, y = (y >> iShift) << nLen, k = (k >> iShift) << nLen;
 
                         pDst = (I16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 3, I16);
                         pDst[0] = (I16)(c), pDst[1] = (I16)(m), pDst[2] = (I16)(y), pDst[3] = (I16)(k);
                     }
                 }
@@ -1496,6 +1514,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                     _ICC(r, g, b);
 
                     pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U16);
                     pDst[0] = backwardHalf(r >> iShift);
                     pDst[1] = backwardHalf(g >> iShift);
                     pDst[2] = backwardHalf(b >> iShift);
@@ -1535,6 +1554,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (U32 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U32);
                         pDst[0] = ((r >> iShift) << nLen);
                         pDst[1] = ((g >> iShift) << nLen);
                         pDst[2] = ((b >> iShift) << nLen);
@@ -1575,6 +1595,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                     _ICC(r, g, b);
 
                     pDst = (int *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 2, int);
                     pDst[0] = ((r >> iShift) << nLen);
                     pDst[1] = ((g >> iShift) << nLen);
                     pDst[2] = ((b >> iShift) << nLen);
@@ -1614,6 +1635,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                     _ICC(r, g, b);
 
                     pDst = (float *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 2, float);
                     pDst[0] = pixel2float (r >> iShift, nExpBias, nLen);
                     pDst[1] = pixel2float (g >> iShift, nExpBias, nLen);
                     pDst[2] = pixel2float (b >> iShift, nExpBias, nLen);
@@ -1652,6 +1674,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                 g >>= iShift, b >>= iShift, r >>= iShift;
                 pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U16);
                 if (pSC->m_param.bRBSwapped)
                     pDst[0] = (U16)_CLIP2(0, b, 31) + (((U16)_CLIP2(0, g, 31)) << 5) + (((U16)_CLIP2(0, r, 31)) << 10);
                 else
@@ -1678,6 +1701,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 
                 g >>= iShift, b >>= iShift + 1, r >>= iShift + 1;
                 pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U16);
                 if (pSC->m_param.bRBSwapped)
                     pDst[0] = (U16)_CLIP2(0, b, 31) + (((U16)_CLIP2(0, g, 63)) << 5) + (((U16)_CLIP2(0, r, 31)) << 11);
                 else
@@ -1705,6 +1729,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
                 g >>= iShift, b >>= iShift, r >>= iShift;
 
                 pDst = (U32 *)pSC->WMIBI.pv + pOffsetX[iColumn] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U32);
                 if (pSC->m_param.bRBSwapped)
                     pDst[0] = (U32)_CLIP2(0, b, 1023) +
                         (((U32)_CLIP2(0, g, 1023)) << 10) +
@@ -1807,7 +1832,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
 }
 
 // Y_ONLY/CF_ALPHA/YUV_444/N_CHANNEL thumbnail decode
-Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const size_t rShiftY, size_t iFirstRow, size_t iFirstColumn)
+Int outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const size_t rShiftY, size_t iFirstRow, size_t iFirstColumn)
 {
     const size_t tScale = pSC->m_Dparam->cThumbnailScale;
     const size_t cWidth = (pSC->m_Dparam->cROIRightX + 1);
@@ -1837,10 +1862,9 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
             for(iOffset = (128 << rShiftY) / cMul, iRow = iFirstRow; iRow < cHeight; iRow += tScale){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     U8 * pDst = (U8 *)pSC->WMIBI.pv + iY + pOffsetX[iColumn >> nBits];
-
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = ((pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] + iOffset) * cMul) >> rShiftY;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, U8);
                         pDst[iChannel] = _CLIP8(p);
                     }
                 }
@@ -1854,7 +1878,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = (((pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] + iOffset) * cMul) >> rShiftY) << nLen;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, U16);
                         pDst[iChannel] = _CLIPU16(p);
                     }
                 }
@@ -1868,7 +1892,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = ((pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] * cMul) >> rShiftY) << nLen;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, I16);
                         pDst[iChannel] = _CLIP16(p);
                     }
                 }
@@ -1882,7 +1906,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = (pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] * cMul) >> rShiftY;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, U16);
                         pDst[iChannel] = backwardHalf(p);
                     }
                 }
@@ -1895,7 +1919,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = (((pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] + iOffset) * cMul) >> rShiftY) << nLen;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, U32);
                         pDst[iChannel] = (U32)(p);
                     }
                 }
@@ -1908,7 +1932,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = ((pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] * cMul) >> rShiftY) << nLen;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, I32);
                         pDst[iChannel] = (I32)(p);
                     }
                 }
@@ -1921,7 +1945,7 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
 
                     for(iChannel = 0; iChannel < cChannel; iChannel ++){
                         PixelI p = (pChannel[iChannel & 15][((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] * cMul) >> rShiftY;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + iChannel, float);
                         pDst[iChannel] = pixel2float (p, nExpBias, nLen);
                     }
                 }
@@ -1929,9 +1953,10 @@ Void outputNChannelThumbnail(CWMImageStrCodec * pSC, const PixelI cMul, const si
             break;
 
         default:
-            assert(0);
-            break;
+            return ICERR_ERROR;
     }
+
+    return ICERR_OK;
 }
 
 // centralized alpha channel thumbnail, small perf penalty
@@ -2127,7 +2152,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         case Y_ONLY:
         case YUV_444:
         case NCOMPONENT:
-            outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+            if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                return ICERR_ERROR;
             break;
 
         case CF_RGBE:
@@ -2199,7 +2225,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         case Y_ONLY:
         case YUV_444:
         case NCOMPONENT:
-            outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+            if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                return ICERR_ERROR;
             break;
 
         case CMYK:
@@ -2257,7 +2284,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
         case Y_ONLY:
         case YUV_444:
         case NCOMPONENT:
-            outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+            if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                return ICERR_ERROR;
             break;
 
         case CMYK:
@@ -2314,7 +2342,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             case Y_ONLY:
             case YUV_444:
             case NCOMPONENT:
-                outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+                if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                    return ICERR_ERROR;
             break;
 
             default:
@@ -2350,7 +2379,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             case Y_ONLY:
             case YUV_444:
             case NCOMPONENT:
-                outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+                if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                    return ICERR_ERROR;
             break;
 
             default:
@@ -2383,7 +2413,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             case Y_ONLY:
             case YUV_444:
             case NCOMPONENT:
-                outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+                if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                    return ICERR_ERROR;
             break;
 
             default:
@@ -2417,7 +2448,8 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
             case Y_ONLY:
             case YUV_444:
             case NCOMPONENT:
-                outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn);
+                if(outputNChannelThumbnail(pSC, cMul, rShiftY, iFirstRow, iFirstColumn) != ICERR_OK)
+                    return ICERR_ERROR;
                 break;
 
             default:
