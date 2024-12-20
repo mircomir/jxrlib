@@ -1985,8 +1985,9 @@ Int decodeThumbnailAlpha(CWMImageStrCodec * pSC, const size_t nBits, const Pixel
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = ((pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] + offset) * cMul) >> rShiftY;
-
-                    ((U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = _CLIP8(a);
+                    U8 *pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, U8);
+                    pDst[iAlphaPos] = _CLIP8(a);
                 }
         }
         else if(bd == BD_16){
@@ -1995,40 +1996,45 @@ Int decodeThumbnailAlpha(CWMImageStrCodec * pSC, const size_t nBits, const Pixel
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = (((pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] + offset) * cMul) >> rShiftY) << nLen;
-
-                    ((U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = _CLIPU16(a);
+                    U16 *pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, U16);
+                    pDst[iAlphaPos] = _CLIPU16(a);
                 }
         }
         else if(bd == BD_16S){
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = ((pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] * cMul) >> rShiftY) << nLen;
-
-                    ((I16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = _CLIP16(a);
+                    I16* pDst = (I16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, I16);
+                    pDst[iAlphaPos] = _CLIP16(a);
                 }
         }
         else if(bd == BD_16F){
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = (pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] * cMul) >> rShiftY;
-
-                    ((U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = backwardHalf(a);
+                    U16 *pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, U16);
+                    pDst[iAlphaPos] = backwardHalf(a);
                 }
         }
         else if(bd == BD_32S){
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = ((pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] * cMul) >> rShiftY) << nLen;
-
-                    ((I32 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = a;
+                    I32 *pDst = (I32 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, I32);
+                    pDst[iAlphaPos] = a;
                 }
         }
         else if(bd == BD_32F){
             for(iRow = iFirstRow; iRow < cHeight; iRow += tScale)
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow >> nBits]; iColumn < cWidth; iColumn += tScale){
                     PixelI a = (pSrc[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 0xf]] * cMul) >> rShiftY;
-
-                    ((float *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY)[iAlphaPos] = pixel2float (a, nExpBias, nLen);
+                    float *pDst = (float *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + iAlphaPos, float);
+                    pDst[iAlphaPos] = pixel2float (a, nExpBias, nLen);
                 }
         }
         else // not supported
@@ -2144,6 +2150,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U8);
                         pDst[iB] = _CLIP8(b), pDst[1] = _CLIP8(g), pDst[iR] = _CLIP8(r);
                 }
             }
@@ -2167,6 +2174,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                     _ICC(r, g, b);
 
                     pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                     inverseConvertRGBE (r, g, b, pDst, pDst + 1, pDst + 2, pDst + 3);
                 }
             }
@@ -2187,6 +2195,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                     _ICC_CMYK(c, m, y, k);
 
                     pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U8);
                     pDst[0] = _CLIP8(c), pDst[1] = _CLIP8(m), pDst[2] = _CLIP8(y), pDst[3] = _CLIP8(k);
                 }
             }
@@ -2214,6 +2223,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U16);
                         r <<= nLen, g <<= nLen, b <<= nLen;
                         pDst[0] = _CLIPU16(r);
                         pDst[1] = _CLIPU16(g);
@@ -2244,6 +2254,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                     _ICC_CMYK(c, m, y, k);
 
                     pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst + 3, U16);
                     c <<= nLen, m <<= nLen, y <<= nLen, k <<= nLen;
                     pDst[0] = _CLIPU16(c);
                     pDst[1] = _CLIPU16(m);
@@ -2273,6 +2284,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (I16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, I16);
                         r <<= nLen, g <<= nLen, b <<= nLen;
                         pDst[0] = _CLIP16(r);
                         pDst[1] = _CLIP16(g);
@@ -2302,6 +2314,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC_CMYK(c, m, y, k);
 
                         pDst = (I16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 3, I16);
                         c <<= nLen, m <<= nLen, y <<= nLen, k <<= nLen;
                         pDst[0] = _CLIP16(c);
                         pDst[1] = _CLIP16(m);
@@ -2332,6 +2345,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U16);
                         pDst[0] = backwardHalf (r);
                         pDst[1] = backwardHalf (g);
                         pDst[2] = backwardHalf (b);
@@ -2368,7 +2382,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (U32 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
-
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, U32);
                         pDst[0] = (U32)(r << nLen);
                         pDst[1] = (U32)(g << nLen);
                         pDst[2] = (U32)(b << nLen);
@@ -2403,6 +2417,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (I32 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, I32);
                         pDst[0] = (I32)(r << nLen);
                         pDst[1] = (I32)(g << nLen);
                         pDst[2] = (I32)(b << nLen);
@@ -2438,6 +2453,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                         _ICC(r, g, b);
 
                         pDst = (float *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                        Ptr_SanityCheck(pSC->WMIBI, pDst + 2, float);
                         pDst[0] = pixel2float (r, nExpBias, nLen);
                         pDst[1] = pixel2float (g, nExpBias, nLen);
                         pDst[2] = pixel2float (b, nExpBias, nLen);
@@ -2471,7 +2487,9 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                     bBW = (pSC->WMISCP.bBlackWhite ^ (pSrcY[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] > 0));
                     cByte = ((U8 *)pSC->WMIBI.pv + (pOffsetX[iColumn >> nBits] >> 3) + iY)[0];
                     cShift = (U8)(7 - (pOffsetX[iColumn >> nBits] & 7));
-                    ((U8 *)pSC->WMIBI.pv + (pOffsetX[iColumn >> nBits] >> 3) + iY)[0] ^= ((((bBW + (cByte >> cShift)) & 0x1)) << cShift);
+                    U8 *pDst = (U8 *)pSC->WMIBI.pv + (pOffsetX[iColumn >> nBits] >> 3) + iY;
+                    Ptr_SanityCheck(pSC->WMIBI, pDst, U8);
+                    pDst[0] ^= ((((bBW + (cByte >> cShift)) & 0x1)) << cShift);
                 }
         }
         else{
@@ -2480,7 +2498,9 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                     bBW = (pSC->WMISCP.bBlackWhite ^ (pSrcY[((iColumn >> 4) << 8) + idxCC[iRow][iColumn & 15]] > 0));
                     cByte = ((U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + (iY >> 3))[0];
                     cShift = (U8)(7 - (iY & 7));
-                    ((U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + (iY >> 3))[0] ^= ((((bBW + (cByte >> cShift)) & 0x1)) << cShift);
+                    U8 *pDst = (U8 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + (iY >> 3);
+                    Ptr_SanityCheck(pSC->WMIBI, pDst, U8);
+                    pDst[0] ^= ((((bBW + (cByte >> cShift)) & 0x1)) << cShift);
                 }
         }
     }
@@ -2498,6 +2518,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
                 _ICC(r, g, b);
                 pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U16);
                 pDst[0] = (U16)_CLIP2(0, r, 31) + (((U16)_CLIP2(0, g, 31)) << 5) + (((U16)_CLIP2(0, b, 31)) << 10);
             }
         }
@@ -2517,6 +2538,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
                 _ICC(r, g, b);
                 r /= 2, b /= 2;
                 pDst = (U16 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U16);
                 pDst[0] = (U16)_CLIP2(0, r, 31) + (((U16)_CLIP2(0, g, 63)) << 5) + (((U16)_CLIP2(0, b, 31)) << 11);
             }
         }
@@ -2535,6 +2557,7 @@ Int decodeThumbnail(CWMImageStrCodec * pSC)
 
                 _ICC(r, g, b);
                 pDst = (U32 *)pSC->WMIBI.pv + pOffsetX[iColumn >> nBits] + iY;
+                Ptr_SanityCheck(pSC->WMIBI, pDst, U32);
                 pDst[0] = (U32)_CLIP2(0, r, 1023) +
                     (((U32)_CLIP2(0, g, 1023)) << 10) +
                     (((U32)_CLIP2(0, b, 1023)) << 20);
