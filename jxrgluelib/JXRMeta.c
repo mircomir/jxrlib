@@ -281,14 +281,17 @@ ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
         FailIf(type == 0 || type >= sizeof(IFDEntryTypeSizes) / sizeof(IFDEntryTypeSizes[0]), WMP_errUnsupportedFormat);
         if ( tag == WMP_tagEXIFMetadata )
         {
+            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
             Call(StreamCalcIFDSize(pWS, value, &cbEXIFIFD));
         }
         else if ( tag == WMP_tagGPSInfoMetadata )
         {
+            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
             Call(StreamCalcIFDSize(pWS, value, &cbGPSInfoIFD));
         }
         else if ( tag == WMP_tagInteroperabilityIFD )
         {
+            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
             Call(StreamCalcIFDSize(pWS, value, &cbInteroperabilityIFD));
         }
         else
@@ -639,7 +642,7 @@ ERR GetULong(
     puValue[0] += ((U32) cVal) << 16;
     Call(pWS->Read(pWS, &cVal, sizeof(cVal)));
     puValue[0] += ((U32) cVal) << 24;
- 
+
 Cleanup:
     return err;
 }
