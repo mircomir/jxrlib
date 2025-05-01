@@ -246,7 +246,7 @@ Cleanup:
 }
 
 
-ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
+ERR StreamCalcIFDSizePrivate(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd, U32 rcnt)
 {
     ERR err = WMP_errSuccess;
     size_t offCurPos = 0;
@@ -262,6 +262,12 @@ ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
     *pcbifd = 0;
     Call(pWS->GetPos(pWS, &offCurPos));
     GetPosOK = TRUE;
+
+    // sanity check: avoid infinite recursion
+    if (rcnt > 10)
+    {
+        Call(WMP_errFail);
+    }
 
     Call(GetUShort(pWS, uIFDOfs, &cDir));
     cbifd = sizeof(U16) + cDir * SizeofIFDEntry + sizeof(U32);
@@ -281,18 +287,15 @@ ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
         FailIf(type == 0 || type >= sizeof(IFDEntryTypeSizes) / sizeof(IFDEntryTypeSizes[0]), WMP_errUnsupportedFormat);
         if ( tag == WMP_tagEXIFMetadata )
         {
-            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
-            Call(StreamCalcIFDSize(pWS, value, &cbEXIFIFD));
+            Call(StreamCalcIFDSizePrivate(pWS, value, &cbEXIFIFD, rcnt + 1));
         }
         else if ( tag == WMP_tagGPSInfoMetadata )
         {
-            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
-            Call(StreamCalcIFDSize(pWS, value, &cbGPSInfoIFD));
+            Call(StreamCalcIFDSizePrivate(pWS, value, &cbGPSInfoIFD, rcnt + 1));
         }
         else if ( tag == WMP_tagInteroperabilityIFD )
         {
-            Call(value == uIFDOfs ? WMP_errFail : WMP_errSuccess); // sanity check: avoid infinite recursion
-            Call(StreamCalcIFDSize(pWS, value, &cbInteroperabilityIFD));
+            Call(StreamCalcIFDSizePrivate(pWS, value, &cbInteroperabilityIFD, rcnt + 1));
         }
         else
         {
@@ -312,11 +315,18 @@ ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
 
 Cleanup:
     if ( GetPosOK )
+    {
         Call(pWS->SetPos(pWS, offCurPos));
+    }
     return ( err );
 }
 
 
+ERR StreamCalcIFDSize(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd)
+{
+    U32 rcnt = 0;
+    return StreamCalcIFDSizePrivate(pWS, uIFDOfs, pcbifd, rcnt);
+}
 
 // src IFD copied to dst IFD with any nested IFD's
 // src IFD is arbitrary endian, arbitrary data arrangement
