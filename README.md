@@ -10,7 +10,7 @@ Although it is a little-known format, it is currently supported by Windows and
 other Microsoft programs for both reading and writing.
 
 The changes were tested with the 
-[T.835 JXR Conformance Suite](https://www.itu.int/rec/T-REC-T.835-201608-I) 
+[T.834 JXR Conformance Suite](https://www.itu.int/rec/T-REC-T.834-201001-S) 
 using KImageFormat's JXR plugin. The test is therefore partial but includes 
 all the most common formats.
 
