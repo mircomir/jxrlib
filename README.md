@@ -2,10 +2,17 @@
 
 ### About this fork
 The goal of this project is to fix problems caused by corrupted JXRs. This was 
-created experimentally after including the JXR plugin in the KImageFormats on 
-oss-fuzz as I was unable to find a maintained JXR library.
+created experimentally after including the JXR plugin in the 
+[KImageFormats](https://invent.kde.org/frameworks/kimageformats) on 
+[oss-fuzz](https://github.com/google/oss-fuzz/tree/master/projects/kimageformats) 
+as I was unable to find a maintained JXR library.
 Although it is a little-known format, it is currently supported by Windows and 
 other Microsoft programs for both reading and writing.
+
+The changes were tested with the 
+[T.835 JXR Conformance Suite](https://www.itu.int/rec/T-REC-T.835-201608-I) 
+using KImageFormat's JXR plugin. The test is therefore partial but includes 
+all the most common formats.
 
 ### JPEG XR Format
 JPEG XR is a still image format based on
