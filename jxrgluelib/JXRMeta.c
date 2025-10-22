@@ -259,15 +259,15 @@ ERR StreamCalcIFDSizePrivate(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd, U3
     U32 cbGPSInfoIFD = 0;
     U32 cbInteroperabilityIFD = 0;
 
-    *pcbifd = 0;
-    Call(pWS->GetPos(pWS, &offCurPos));
-    GetPosOK = TRUE;
-
     // sanity check: avoid infinite recursion
     if (rcnt > 10)
     {
         Call(WMP_errFail);
     }
+
+    *pcbifd = 0;
+    Call(pWS->GetPos(pWS, &offCurPos));
+    GetPosOK = TRUE;
 
     Call(GetUShort(pWS, uIFDOfs, &cDir));
     cbifd = sizeof(U16) + cDir * SizeofIFDEntry + sizeof(U32);
@@ -314,9 +314,9 @@ ERR StreamCalcIFDSizePrivate(struct WMPStream* pWS, U32 uIFDOfs, U32 *pcbifd, U3
     *pcbifd = cbifd;
 
 Cleanup:
-    if ( GetPosOK )
+    if ( GetPosOK && err == WMP_errSuccess )
     {
-        Call(pWS->SetPos(pWS, offCurPos));
+        err = pWS->SetPos(pWS, offCurPos);
     }
     return ( err );
 }
