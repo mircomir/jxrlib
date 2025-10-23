@@ -735,7 +735,9 @@ ERR ReadPropvar(__in_ecount(1) struct WMPStream* pWS,
         case WMP_typASCII:
             pvar->vt = DPKVT_LPSTR;
             Call(ReadBinaryData(pWS, uCount, uValue, (U8 **) &pvar->VT.pszVal));
-            assert(0 == pvar->VT.pszVal[uCount - 1]); // Check that it's null-terminated
+            if(pvar->VT.pszVal[uCount - 1] != 0)
+                pvar->VT.pszVal[uCount - 1] = 0;
+            // assert(0 == pvar->VT.pszVal[uCount - 1]); // Check that it's null-terminated
             // make sure (ReadBinaryData allocated uCount + 2 so this and unicode can have forced nulls)
             pvar->VT.pszVal[uCount] = 0;
             break;
