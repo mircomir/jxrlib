@@ -14,6 +14,13 @@ The changes were tested with the
 using KImageFormat's JXR plugin. The test is therefore partial but includes 
 all the most common formats.
 
+### Changelog
+- V1.3.2; 2026/04/13
+  - Fix OSS-Fuzz issue 497787225
+- V1.3.1; 2025/10/23
+  - First release with multiple security fixes
+  - Should also fixes CVE-2019-12212 (https://sourceforge.net/p/freeimage/discussion/36111/thread/e06734bed5/)
+
 ### JPEG XR Format
 JPEG XR is a still image format based on
 technology originally developed by Mirosoft under the name HD Photo (formerly

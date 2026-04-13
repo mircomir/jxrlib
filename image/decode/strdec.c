@@ -1788,7 +1788,7 @@ Int outputMBRow(CWMImageStrCodec * pSC)
     for(iRow = iFirstRow; iRow < cHeight; iRow ++) {\
         size_t iOffsetY;\
         for(iColumn = iFirstColumn, iOffsetY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){\
-            if(iOffsetY + pOffsetX[iColumn] * sizeof(type) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) /* sanity check */ \
+            if((iOffsetY + pOffsetX[iColumn] + 2) * sizeof(type) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) /* sanity check */ \
                 return ICERR_ERROR;\
             type *pT = (type*)(U8 *)pSC->WMIBI.pv + iOffsetY + pOffsetX[iColumn];\
             pT[2] = pT[1] = pT[0]; \
