@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.3.3; 2026/04/20
+  - Fix memory leak when `Caption` metadata is present
 - V1.3.2; 2026/04/13
   - Fix OSS-Fuzz issue 497787225
 - V1.3.1; 2025/10/23
