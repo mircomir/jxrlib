@@ -190,6 +190,10 @@ void FreeDescMetadata(DPKPROPVARIANT *pvar)
             PKFree((void **) &pvar->VT.pwszVal);
             break;
 
+        case DPKVT_UI1 | DPKVT_BYREF:
+            PKFree((void **) &pvar->VT.pbVal);
+            break;
+
         default:
             assert(FALSE); // This case is not handled
             break;
