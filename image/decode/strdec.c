@@ -2991,10 +2991,14 @@ Int StrDecTerm(CWMImageStrCodec* pSC)
 
     for (j = 0; j <= jend; j++) {
         if(pSC->m_bUVResolutionChange){
-            if(pSC->pResU != NULL)
+            if(pSC->pResU != NULL) {
                 free(pSC->pResU);
-            if(pSC->pResV != NULL)
+                pSC->pResU = NULL;
+            }
+            if(pSC->pResV != NULL) {
                 free(pSC->pResV);
+                pSC->pResV = NULL;
+            }
         }
 
         freePredInfo(pSC);
@@ -3007,10 +3011,14 @@ Int StrDecTerm(CWMImageStrCodec* pSC)
             StrIODecTerm(pSC);
 
             // free lookup tables for rotation and flipping
-            if(pSC->m_Dparam->pOffsetX != NULL)
+            if(pSC->m_Dparam->pOffsetX != NULL) {
                 free(pSC->m_Dparam->pOffsetX);
-            if(pSC->m_Dparam->pOffsetY != NULL)
+                pSC->m_Dparam->pOffsetX = NULL;
+            }
+            if(pSC->m_Dparam->pOffsetY != NULL) {
                 free(pSC->m_Dparam->pOffsetY);
+                pSC->m_Dparam->pOffsetY = NULL;
+            }
         }
 
         pSC = pSC->m_pNextSC;

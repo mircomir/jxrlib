@@ -832,8 +832,10 @@ Void freeTileInfo(CWMImageStrCodec * pSC)
         else
             freeQuantizer(pSC->pTile[0].pQuantizerHP);
 
-    if(pSC->pTile != NULL)
+    if(pSC->pTile != NULL) {
         free(pSC->pTile);
+        pSC->pTile = NULL;
+    }
 }
 
 Int allocateQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS], size_t cChannel, size_t cQP)
@@ -854,8 +856,10 @@ Int allocateQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS], size_t cChannel,
 
 Void freeQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS])
 {
-    if(pQuantizer[0] != NULL)
+    if(pQuantizer[0] != NULL) {
         free(pQuantizer[0]);
+        pQuantizer[0] = NULL;
+    }
 }
 
 Void formatQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS], U8 cChMode, size_t cCh, size_t iPos, Bool bShiftedUV,
