@@ -195,6 +195,7 @@ Void FreeCodingContextDec(CWMImageStrCodec *pSC)
                 CleanAH (&pContext->m_pAHexpt[k]);
         }
         free (pSC->m_pCodingContext);
+        pSC->m_pCodingContext = NULL;
     }
 }
 
