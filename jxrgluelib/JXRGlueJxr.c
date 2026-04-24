@@ -2041,7 +2041,10 @@ ERR PKImageDecode_Copy_WMP(
             size_t cLinesDecoded;
             wmiBI.uiFirstMBRow = i;
             wmiBI.uiLastMBRow = i;
-            FailIf(ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC, &wmiBI, &cLinesDecoded), WMP_errFail);
+            if (ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC, &wmiBI, &cLinesDecoded)) {
+                ImageStrDecTerm(pID->WMP.ctxSC);
+                FailIf(TRUE, WMP_errFail);
+            }
             pID->WMP.cLinesDecoded = cLinesDecoded;
             if (FALSE == pID->WMP.fFirstNonZeroDecode && cLinesDecoded > 0)
             {
@@ -2141,7 +2144,10 @@ ERR PKImageDecode_Copy_WMP(
             size_t cLinesDecoded;
             wmiBI.uiFirstMBRow = i;
             wmiBI.uiLastMBRow = i;
-            FailIf(ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC_Alpha, &wmiBI, &cLinesDecoded), WMP_errFail);
+            if (ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC_Alpha, &wmiBI, &cLinesDecoded)) {
+                ImageStrDecTerm(pID->WMP.ctxSC_Alpha);
+                FailIf(TRUE, WMP_errFail);
+            }
         }
 
         // If we're past the top of the image, then we're done, so terminate
