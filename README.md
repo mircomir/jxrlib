@@ -15,6 +15,9 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.3.4; 2026/04/27
+  - Fix memory leaks in PKImageDecode_Copy_WMP
+  - Fix Null-dereference READ in invTransformMacroblock
 - V1.3.3; 2026/04/20
   - Fix memory leak when `Caption` metadata is present
 - V1.3.2; 2026/04/13

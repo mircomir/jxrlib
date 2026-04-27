@@ -380,7 +380,8 @@ Int processMacroblockDec(CWMImageStrCodec * pSC)
             // do nothing
         }
         else {
-            pSC->Transform(pSC);
+            if((result = pSC->Transform(pSC)) != ICERR_OK)
+                return result;
         }
 
         if (jend) {
