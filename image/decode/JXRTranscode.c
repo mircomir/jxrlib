@@ -826,16 +826,16 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
                                     pTmp->lpIndex[j][i] = pTile->pQuantizerLP[i][j].iIndex;
                             }
                             
-                            if(pSCEnc->WMISCP.sbSubband != SB_NO_HIGHPASS){
-                                pTmp->bUseLP = pTile->bUseLP;
-                                pTmp->hpNum = pTile->cNumQPHP;
-                                if(pTmp->bUseLP == FALSE)
-                                    for(j = 0; j < pTmp->hpNum; j ++){
-                                        pTmp->hpMode[j] = pTile->cChModeHP[j];
-                                        for(i = 0; i < pSCEnc->WMISCP.cChannel; i ++)
-                                            pTmp->hpIndex[j][i] = pTile->pQuantizerHP[i][j].iIndex;
-                                    }
-                            }
+                        if(pSCEnc->WMISCP.sbSubband != SB_NO_HIGHPASS){
+                            pTmp->bUseLP = pTile->bUseLP;
+                            pTmp->hpNum = pTile->cNumQPHP;
+                            if(pTmp->bUseLP == FALSE)
+                                for(j = 0; j < pTmp->hpNum; j ++){
+                                    pTmp->hpMode[j] = pTile->cChModeHP[j];
+                                    for(i = 0; i < pSCEnc->WMISCP.cChannel; i ++)
+                                        pTmp->hpIndex[j][i] = pTile->pQuantizerHP[i][j].iIndex;
+                                }
+                        }
                     }
 
                     if(pParam->uAlphaMode > 0){
@@ -925,8 +925,8 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
                         transformACBlocks422(pFrameBuf + cOff * cUnit + 256 + i * 128, pMBBuf + 256 + i * 128, oO);
                     }
 
-                    pSCEnc->MBInfo.iQIndexLP = pMBInfo[cOff].iQIndexLP;
-                    pSCEnc->MBInfo.iQIndexHP = pMBInfo[cOff].iQIndexHP;
+                pSCEnc->MBInfo.iQIndexLP = pMBInfo[cOff].iQIndexLP;
+                pSCEnc->MBInfo.iQIndexHP = pMBInfo[cOff].iQIndexHP;
 
                 cRow = (Int)pSCEnc->cRow - 1;
                 cColumn = (Int)pSCEnc->cColumn - 1;

@@ -206,9 +206,9 @@ static const PKPixelInfo pixelInfo[] = {
     {&GUID_PKPixelFormat32bppRGBE, 4, CF_RGBE, BD_8, 32, PK_pixfmtNul, PK_PI_RGBE, 4, 8, 1},
 
     //YUV
-    {&GUID_PKPixelFormat12bppYUV420, 3, YUV_420, BD_8, 48, PK_pixfmtNul},
-    {&GUID_PKPixelFormat16bppYUV422, 3, YUV_422, BD_8, 32, PK_pixfmtNul},
-    {&GUID_PKPixelFormat24bppYUV444, 3, YUV_444, BD_8, 24, PK_pixfmtNul},
+    {&GUID_PKPixelFormat12bppYUV420, 3, YUV_420, BD_8, 48, PK_pixfmtNul, 0, 0, 0, 0},
+    {&GUID_PKPixelFormat16bppYUV422, 3, YUV_422, BD_8, 32, PK_pixfmtNul, 0, 0, 0, 0},
+    {&GUID_PKPixelFormat24bppYUV444, 3, YUV_444, BD_8, 24, PK_pixfmtNul, 0, 0, 0, 0},
 };
 
 //----------------------------------------------------------------
@@ -254,7 +254,7 @@ Cleanup:
 
 const PKPixelFormatGUID* GetPixelFormatFromHash(const U8 uPFHash)
 {
-    int i;
+    size_t i;
 
     for (i = 0; i < sizeof2(pixelInfo); i++)
     {
