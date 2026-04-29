@@ -268,7 +268,7 @@ Void updatePredInfo(CWMImageStrCodec *pSC, CWMIMBInfo * pMBInfo, size_t mbX, COL
     }
 
     if(cf == YUV_420){ // 420 UV channels
-        for(i = 1U; i < 3U; i ++){
+        for(i = 1; i < 3; i ++){
             pPredInfo = pSC->PredInfo[i] + mbX;
             p = pMBInfo->iBlockDC[i];//[dcBlkIdx + i];
             
@@ -283,7 +283,7 @@ Void updatePredInfo(CWMImageStrCodec *pSC, CWMIMBInfo * pMBInfo, size_t mbX, COL
         }
     }
     else if(cf == YUV_422){ // 420 UV channels
-        for(i = 1U; i < 3U; i ++){
+        for(i = 1; i < 3; i ++){
             pPredInfo = pSC->PredInfo[i] + mbX;
 
             /* QP Index */

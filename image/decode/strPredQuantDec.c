@@ -209,7 +209,7 @@ Void predACDec(CWMImageStrCodec * pSC)
                 // predict from top
                 static U8 blkIdx[] = {1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15};
 
-                for (j = 0; j < sizeof(blkIdx) / sizeof(*blkIdx); ++j)
+                for (j = 0; j < (Int)(sizeof(blkIdx) / sizeof(*blkIdx)); ++j)
                 {
                     pOrg = pSrc + 16 * blkIdx[j];
                     pRef = pOrg - 16;

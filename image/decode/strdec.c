@@ -67,9 +67,12 @@ U8 readQuantizerSB(U8 pQPIndex[MAX_CHANNELS], SimpleBitIO * pIO, size_t cChannel
     else if(cChMode > 0){ // INDEPENDENT
         size_t i;
 
-        for(i = 1; i < cChannel; i ++)
+        for(i = 1; i < cChannel; i ++) {
+#ifdef _MSC_VER
 #pragma prefast(suppress: __WARNING_UNRELATED_LOOP_TERMINATION_NO_SIZEEXPR, "PREfast false alarm: 1 <= i < MAX_CHANNELS, no buffer over/underrun!")
+#endif
             pQPIndex[i] = (U8)getBit32_SB(pIO, 8); // UV
+        }
     }
 
     return cChMode;
