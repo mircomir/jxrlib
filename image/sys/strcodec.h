@@ -64,7 +64,7 @@
 
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(P) { (P) = (P); }
-#endif UNREFERENCED_PARAMETER
+#endif // UNREFERENCED_PARAMETER
 
 #ifdef UNDER_CE
 #define PLATFORM_WCE
@@ -673,6 +673,16 @@ void flushToByte(BitIOInfo* pIO);
     pIO->cBitsUsed &= 16 - 1;\
     pIO->uiAccumulator = LOAD16(pIO->pbCurrent) << pIO->cBitsUsed;\
     return 0;
-//    pIO->uiAccumulator = LOAD16(pIO->pbCurrent) & ((U32)(-1) >> pIO->cBitsUsed);\
 
 void OutputPerfTimerReport(CWMImageStrCodec *pState);
+
+#if (defined(WIN32) && !defined(UNDER_CE)) || (defined(UNDER_CE) && defined(_ARM_))
+// WinCE ARM and Desktop x86
+#else
+// other platform
+#ifdef _BIG__ENDIAN_
+#define _byteswap_ulong(x)  (x)
+#else // _BIG__ENDIAN_
+U32 _byteswap_ulong(U32 bits);
+#endif // _BIG__ENDIAN_
+#endif

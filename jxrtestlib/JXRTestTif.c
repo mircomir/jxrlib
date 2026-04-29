@@ -909,8 +909,8 @@ ERR PKImageDecode_Release_TIF(PKTestDecode** ppID)
 
     PKTestDecode *pID = *ppID;
 
-    Call(WMPFree(&pID->EXT.TIF.uStripOffsets));
-    Call(WMPFree(&pID->EXT.TIF.uStripByteCounts));
+    Call(WMPFree((void**)&pID->EXT.TIF.uStripOffsets));
+    Call(WMPFree((void**)&pID->EXT.TIF.uStripByteCounts));
 
     Call(PKTestDecode_Release(ppID));
 

@@ -258,19 +258,17 @@ typedef long ERR;
 #endif
 
 #define Call(exp) \
-    if (Failed(err = (exp))) \
+    do if (Failed(err = (exp))) \
     { \
         Report(err, #exp, __FILE__, (long)__LINE__); \
         goto Cleanup; \
-    } \
-    else err = err
+    } while(0)
 
 #define CallIgnoreError(errTmp, exp) \
-    if (Failed(errTmp = (exp))) \
+    do if (Failed(errTmp = (exp))) \
     { \
         Report(errTmp, #exp, __FILE__, (long)__LINE__); \
-    } \
-    else errTmp = errTmp
+    } while (0)
 
 
 #define Test(exp, err) Call((exp) ? WMP_errSuccess : (err))

@@ -668,9 +668,7 @@ ERR detach_SB(SimpleBitIO* pSB)
 // WinCE ARM and Desktop x86
 #else
 // other platform
-#ifdef _BIG__ENDIAN_
-#define _byteswap_ulong(x)  (x)
-#else // _BIG__ENDIAN_
+#ifndef _BIG__ENDIAN_
 U32 _byteswap_ulong(U32 bits)
 {
     U32 r = (bits & 0xffu) << 24;

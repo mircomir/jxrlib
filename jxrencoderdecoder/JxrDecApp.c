@@ -427,7 +427,7 @@ ERR WmpDecAppCreateEncoderFromExt(
     Call(GetTestEncodeIID(szExt, &pIID));
 
     // Create encoder
-    Call(PKTestFactory_CreateCodec(pIID, ppIE));
+    Call(PKTestFactory_CreateCodec(pIID, (void **)ppIE));
 
 Cleanup:
     return err;
