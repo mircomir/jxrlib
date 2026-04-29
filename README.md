@@ -16,15 +16,27 @@ all the most common formats.
 
 ### Changelog
 - V1.3.4; 2026/04/27
-  - Fix memory leaks in PKImageDecode_Copy_WMP
-  - Fix Null-dereference READ in invTransformMacroblock
+  - Fix memory leaks in `PKImageDecode_Copy_WMP` (OSS Fuzz [396171610](https://issues.oss-fuzz.com/issues/396171610))
+  - Fix Null-dereference READ in `invTransformMacroblock` (OSS Fuzz [506921661](https://issues.oss-fuzz.com/issues/506921661))
 - V1.3.3; 2026/04/20
-  - Fix memory leak when `Caption` metadata is present
+  - Fix memory leak when `Caption` metadata is present (OSS Fuzz [396172316](https://issues.oss-fuzz.com/issues/396172316))
 - V1.3.2; 2026/04/13
-  - Fix OSS-Fuzz issue 497787225
+  - Fix Abrt in `ImageStrDecTerm` (OSS Fuzz [497787225](https://issues.oss-fuzz.com/issues/497787225))
 - V1.3.1; 2025/10/23
   - First release with multiple security fixes
-  - Should also fixes CVE-2019-12212 (https://sourceforge.net/p/freeimage/discussion/36111/thread/e06734bed5/)
+    - OSS Fuzz [404307109](https://issues.oss-fuzz.com/issues/404307109), 
+      [379254062](https://issues.oss-fuzz.com/issues/379254062),
+      [378836895](https://issues.oss-fuzz.com/issues/378836895),
+      [377965577](https://issues.oss-fuzz.com/issues/377965577),
+      [373025984](https://issues.oss-fuzz.com/issues/373025984),
+      [373025974](https://issues.oss-fuzz.com/issues/373025974),
+      [372598913](https://issues.oss-fuzz.com/issues/372598913),
+      [372547401](https://issues.oss-fuzz.com/issues/372547401),
+      [372524130](https://issues.oss-fuzz.com/issues/372524130)
+    - Others not tracked via online systems
+    - Should also fixes [CVE-2019-12212](https://nvd.nist.gov/vuln/detail/CVE-2019-12212)
+  - Fix compilation error on macOS
+  - Sources converted to UTF-8 encoding
 
 ### JPEG XR Format
 JPEG XR is a still image format based on
