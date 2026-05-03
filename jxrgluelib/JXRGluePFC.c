@@ -2190,7 +2190,7 @@ static PKPixelConverter2Info s_pcInfo2[] = {
 ERR PKFormatConverter_Initialize(PKFormatConverter* pFC, PKImageDecode* pID, char *pExt, PKPixelFormatGUID enPF)
 {
     ERR err;
-    PKPixelFormatGUID   enPFFrom;
+    PKPixelFormatGUID enPFFrom = GUID_PKPixelFormatUndefined;
 
     Call(pID->GetPixelFormat(pID, &enPFFrom));
     Call(PKFormatConverter_InitializeConvert(pFC, enPFFrom, pExt, enPF));
