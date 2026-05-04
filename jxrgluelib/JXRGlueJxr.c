@@ -1810,7 +1810,7 @@ ERR ReadContainer(
     struct WMPStream* pWS = pID->pStream;
     size_t offPos = 0;
 
-    char szSig[2] = {0};
+    char szSig[3] = {0};
     U16 uWmpID = 0;
     U32 offPFD = 0;
     U16 cPFDEntry = 0;
@@ -1822,7 +1822,7 @@ ERR ReadContainer(
 
     //================================
     // Header
-    Call(pWS->Read(pWS, szSig, sizeof(szSig))); offPos += 2;
+    Call(pWS->Read(pWS, szSig, sizeof(szSig) - 1)); offPos += 2;
     FailIf(szSig != strstr(szSig, "II"), WMP_errUnsupportedFormat);
 
     Call(GetUShort(pWS, offPos, &uWmpID)); offPos += 2;
