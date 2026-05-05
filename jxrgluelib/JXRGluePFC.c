@@ -2141,8 +2141,8 @@ static PKPixelConverterInfo s_pcInfo[] = {
     {&GUID_PKPixelFormat32bppPRGBA, &GUID_PKPixelFormat32bppPBGRA, RGBA32_BGRA32}, // Fwd
     {&GUID_PKPixelFormat32bppPBGRA, &GUID_PKPixelFormat32bppPRGBA, BGRA32_RGBA32}, // Rev
 
-	// conversions to 8bppGray / 24bppRGB / 32bppRGBA
-	{&GUID_PKPixelFormatBlackWhite, &GUID_PKPixelFormat8bppGray, BlackWhite_Gray8},
+    // conversions to 8bppGray / 24bppRGB / 32bppRGBA
+    {&GUID_PKPixelFormatBlackWhite, &GUID_PKPixelFormat8bppGray, BlackWhite_Gray8},
     {&GUID_PKPixelFormat16bppGray, &GUID_PKPixelFormat8bppGray, Gray16_Gray8},
     {&GUID_PKPixelFormat48bppRGB, &GUID_PKPixelFormat24bppRGB, RGB48_RGB24},
     {&GUID_PKPixelFormat64bppRGBA, &GUID_PKPixelFormat32bppRGBA, RGBA64_RGBA32},
