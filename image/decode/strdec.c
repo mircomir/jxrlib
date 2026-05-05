@@ -3168,7 +3168,8 @@ Int ReadWMIHeader(
 // 0
     /** signature **/
     Call(pWS->Read(pWS, szMS, sizeof(szMS)));
-    szMS[7] = 0;
+    if(szMS[7] != 0)
+        return ICERR_ERROR;
     FailIf(szMS != (U8 *) strstr((char *) szMS, "WMPHOTO"), WMP_errUnsupportedFormat);
     //================================
     Call(attach_SB(pSB, pWS));
