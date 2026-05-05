@@ -174,38 +174,41 @@ typedef FMTID *LPFMTID;
 #include <wchar.h>
 #endif
 
-// Faster (but makes code fatter) inline version...use sparingly
 #ifdef __cplusplus
-__inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
-{
-   return (
-      ((unsigned long *) &rguid1)[0] == ((unsigned long *) &rguid2)[0] &&
-      ((unsigned long *) &rguid1)[1] == ((unsigned long *) &rguid2)[1] &&
-      ((unsigned long *) &rguid1)[2] == ((unsigned long *) &rguid2)[2] &&
-      ((unsigned long *) &rguid1)[3] == ((unsigned long *) &rguid2)[3]);
-}
 
 __inline int IsEqualGUID(REFGUID rguid1, REFGUID rguid2)
 {
-    return !memcmp(&rguid1, &rguid2, sizeof(GUID));
+    return (rguid1.Data1 == rguid2.Data1 &&
+            rguid1.Data2 == rguid2.Data2 &&
+            rguid1.Data3 == rguid2.Data3 &&
+            rguid1.Data4[0] == rguid2.Data4[0] &&
+            rguid1.Data4[1] == rguid2.Data4[1] &&
+            rguid1.Data4[2] == rguid2.Data4[2] &&
+            rguid1.Data4[3] == rguid2.Data4[3] &&
+            rguid1.Data4[4] == rguid2.Data4[4] &&
+            rguid1.Data4[5] == rguid2.Data4[5] &&
+            rguid1.Data4[6] == rguid2.Data4[6] &&
+            rguid1.Data4[7] == rguid2.Data4[7]);
 }
 
 #else   // ! __cplusplus
 
-#define InlineIsEqualGUID(rguid1, rguid2)  \
-        (((unsigned long *) rguid1)[0] == ((unsigned long *) rguid2)[0] &&   \
-        ((unsigned long *) rguid1)[1] == ((unsigned long *) rguid2)[1] &&    \
-        ((unsigned long *) rguid1)[2] == ((unsigned long *) rguid2)[2] &&    \
-        ((unsigned long *) rguid1)[3] == ((unsigned long *) rguid2)[3])
-
-#define IsEqualGUID(rguid1, rguid2) (!memcmp(rguid1, rguid2, sizeof(GUID)))
+static inline int IsEqualGUID(REFGUID rguid1, REFGUID rguid2)
+{
+    return (rguid1->Data1 == rguid2->Data1 &&
+            rguid1->Data2 == rguid2->Data2 &&
+            rguid1->Data3 == rguid2->Data3 &&
+            rguid1->Data4[0] == rguid2->Data4[0] &&
+            rguid1->Data4[1] == rguid2->Data4[1] &&
+            rguid1->Data4[2] == rguid2->Data4[2] &&
+            rguid1->Data4[3] == rguid2->Data4[3] &&
+            rguid1->Data4[4] == rguid2->Data4[4] &&
+            rguid1->Data4[5] == rguid2->Data4[5] &&
+            rguid1->Data4[6] == rguid2->Data4[6] &&
+            rguid1->Data4[7] == rguid2->Data4[7]);
+}
 
 #endif  // __cplusplus
-
-#ifdef __INLINE_ISEQUAL_GUID
-#undef IsEqualGUID
-#define IsEqualGUID(rguid1, rguid2) InlineIsEqualGUID(rguid1, rguid2)
-#endif
 
 // Same type, different name
 
