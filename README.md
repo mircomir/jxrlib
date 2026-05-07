@@ -15,7 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
-- V1.3.6; 2026/05/04
+- V1.3.6; 2026/05/07
+  - Use-of-uninitialized-value in `PKFormatConverter_InitializeConvert` (OSS Fuzz [506459298](https://issues.oss-fuzz.com/issues/506459298))
   - Use-of-uninitialized-value in `ReadWMIHeader` (OSS Fuzz [508365265](https://issues.oss-fuzz.com/issues/508365265))
   - Fix buffer read overflow in `ReadContainer`
 - V1.3.5; 2026/04/29
