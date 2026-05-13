@@ -1576,7 +1576,7 @@ ERR ParsePFDEntry(
 
         case WMP_tagTransformation:
             FailIf(1 != uCount, WMP_errUnsupportedFormat);
-            assert(uValue < O_MAX);
+            FailIf(uValue >= O_MAX, WMP_errUnsupportedFormat);
             pID->WMP.fOrientationFromContainer = TRUE;
             pID->WMP.oOrientationFromContainer = uValue;
             break;
