@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.3.7; 2026/05/13
+  - Fix Invalid-enum-value in `ParsePFDEntry` (OSS Fuzz [511393476](https://issues.oss-fuzz.com/issues/511393476))
 - V1.3.6; 2026/05/07
   - Use-of-uninitialized-value in `PKFormatConverter_InitializeConvert` (OSS Fuzz [506459298](https://issues.oss-fuzz.com/issues/506459298))
   - Use-of-uninitialized-value in `ReadWMIHeader` (OSS Fuzz [508365265](https://issues.oss-fuzz.com/issues/508365265))
@@ -47,7 +49,7 @@ all the most common formats.
 
 ### JPEG XR Format
 JPEG XR is a still image format based on
-technology originally developed by Mirosoft under the name HD Photo (formerly
+technology originally developed by Microsoft under the name HD Photo (formerly
 Windows Media™ Photo). The JPEG XR format is similar, but not identical, to the
 HD Photo/Windows Media™ Photo format.
 
