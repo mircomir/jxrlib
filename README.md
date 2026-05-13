@@ -18,8 +18,8 @@ all the most common formats.
 - V1.3.7; 2026/05/13
   - Fix Invalid-enum-value in `ParsePFDEntry` (OSS Fuzz [511393476](https://issues.oss-fuzz.com/issues/511393476))
 - V1.3.6; 2026/05/07
-  - Use-of-uninitialized-value in `PKFormatConverter_InitializeConvert` (OSS Fuzz [506459298](https://issues.oss-fuzz.com/issues/506459298))
-  - Use-of-uninitialized-value in `ReadWMIHeader` (OSS Fuzz [508365265](https://issues.oss-fuzz.com/issues/508365265))
+  - Fix Use-of-uninitialized-value in `PKFormatConverter_InitializeConvert` (OSS Fuzz [506459298](https://issues.oss-fuzz.com/issues/506459298))
+  - Fix Use-of-uninitialized-value in `ReadWMIHeader` (OSS Fuzz [508365265](https://issues.oss-fuzz.com/issues/508365265))
   - Fix buffer read overflow in `ReadContainer`
 - V1.3.5; 2026/04/29
   - Changelog updated with list of fixed issues
