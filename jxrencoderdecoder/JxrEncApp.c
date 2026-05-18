@@ -615,7 +615,7 @@ main(int argc, char* argv[])
 
     //================================
     Call(PKCreateCodecFactory(&pCodecFactory, WMP_SDK_VERSION));
-    Call(pCodecFactory->CreateCodec(&IID_PKImageWmpEncode, &pEncoder));
+    Call(pCodecFactory->CreateCodec(&IID_PKImageWmpEncode, (void**)&pEncoder));
 
     //----------------------------------------------------------------
     Call(PKCreateTestFactory(&pTestFactory, WMP_SDK_VERSION));
