@@ -164,8 +164,8 @@ ERR WriteBMPHeader(
     bmpIH.iPlanes = 1;
     bmpIH.iBitCount = (I16)(8 * pIE->cbPixel);
     bmpIH.uImageSize = (U32)(cbLineS * pIE->uHeight);
-    bmpIH.iPelsPerMeterX = (I32)(pIE->fResX * 39.37);
-    bmpIH.iPelsPerMeterY = (I32)(pIE->fResY * 39.37);
+    bmpIH.iPelsPerMeterX = (I32)(pIE->fResX / 0.0254 + 0.5);
+    bmpIH.iPelsPerMeterY = (I32)(pIE->fResY / 0.0254 + 0.5);
 
     Call(pS->Write(pS, &bmpFH, sizeof(bmpFH)));
     Call(pS->Write(pS, &bmpIH, sizeof(bmpIH)));
