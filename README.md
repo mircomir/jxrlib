@@ -10,11 +10,14 @@ Although it is a little-known format, it is currently supported by Windows and
 other Microsoft programs for both reading and writing.
 
 The changes were tested with the 
-[T.834 JXR Conformance Suite](https://www.itu.int/rec/T-REC-T.834-201001-S) 
+[T.834 JXR Conformance Suite](http://handle.itu.int/11.1002/2000/10648) 
 using KImageFormat's JXR plugin. The test is therefore partial but includes 
 all the most common formats.
 
 ### Changelog
+- V1.4.0; 2026/05/22
+  - Initial support for memory allocation limit via `PKAlloc_SetLimit` / `PKAlloc_GetLimit` experimental API
+  - Added `PKLibJxr_GetVersion` API to get library version
 - V1.3.8; 2026/05/21
   - Fix DPI conversion accuracy in BMPs
   - Fix compilation error using GCC 15.2
