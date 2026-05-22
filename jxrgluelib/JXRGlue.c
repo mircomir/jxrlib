@@ -31,6 +31,8 @@
 #define INITGUID
 #include <JXRGlue.h>
 
+static size_t CB_PKAlloc_MaxBytes = 0;
+
 //================================================================
 const PKIID IID_PKImageScanEncode = 1;
 const PKIID IID_PKImageFrameEncode = 2;
@@ -45,6 +47,12 @@ const PKIID IID_PKImageWmpDecode = 201;
 //================================================================
 ERR PKAlloc(void** ppv, size_t cb)
 {
+    const size_t cbMax = CB_PKAlloc_MaxBytes;
+    if(cbMax && cb > cbMax) {
+        *ppv = NULL;
+        return WMP_errOutOfMemory;
+    }
+
     *ppv = calloc(1, cb);
     return *ppv ? WMP_errSuccess : WMP_errOutOfMemory;
 }
@@ -67,10 +75,15 @@ ERR PKAllocAligned(void** ppv, size_t cb, size_t iAlign)
     U8          *pReturnedPtr;
     size_t       iAlignmentCorrection;
     const size_t c_cbBlockSize = cb + sizeof(void*) + iAlign - 1;
+    const size_t cbMax = CB_PKAlloc_MaxBytes;
 
     *ppv = NULL;
+
+    if(cbMax && c_cbBlockSize > cbMax)
+        return WMP_errOutOfMemory;
+
     pOrigPtr = calloc(1, c_cbBlockSize);
-    if (NULL == pOrigPtr)
+    if (pOrigPtr == NULL)
         return WMP_errOutOfMemory;
 
     iAlignmentCorrection = iAlign - ((size_t)pOrigPtr % iAlign);
@@ -101,7 +114,33 @@ ERR PKFreeAligned(void** ppv)
     return WMP_errSuccess;
 }
 
+ERR PKAlloc_SetLimit(size_t cb)
+{
+    CB_PKAlloc_MaxBytes = cb;
+    return WMP_errSuccess;
+}
 
+ERR PKAlloc_GetLimit(size_t *pcb)
+{
+    if(pcb == NULL)
+        return WMP_errInvalidArgument;
+
+    *pcb = CB_PKAlloc_MaxBytes;
+    return WMP_errSuccess;
+}
+
+ERR PKLibJxr_GetVersion(U32 *version)
+{
+    if(version == NULL)
+        return WMP_errInvalidArgument;
+
+#if defined(JXR_VERSION)
+    *version = JXR_VERSION;
+    return WMP_errSuccess;
+#else
+    return WMP_errNotYetImplemented;
+#endif
+}
 
 int PKStrnicmp(const char* s1, const char* s2, size_t c)
 {
