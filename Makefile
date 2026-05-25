@@ -42,12 +42,12 @@ DIR_EXEC=jxrencoderdecoder
 
 ## Set the version defined in the sources
 VERSION_H := $(DIR_SRC)/$(DIR_GLUE)/JXRVersion.h
-GET_VER_MAJOR := $(shell grep -E '#define[[:space:]]+JXR_VERSION_MAJOR[[:space:]]+[0-9]+' "$(VERSION_H)" | cut -d' ' -f3)
-GET_VER_MINOR := $(shell grep -E '#define[[:space:]]+JXR_VERSION_MINOR[[:space:]]+[0-9]+' "$(VERSION_H)" | cut -d' ' -f3)
-GET_VER_PATCH := $(shell grep -E '#define[[:space:]]+JXR_VERSION_PATCH[[:space:]]+[0-9]+' "$(VERSION_H)" | cut -d' ' -f3)
-JXR_VERSION_MAJOR := $(strip $(GET_VER_MAJOR))
-JXR_VERSION_MINOR := $(strip $(GET_VER_MINOR))
-JXR_VERSION_PATCH := $(strip $(GET_VER_PATCH))
+GET_VER_MAJOR = $(shell grep -E 'define[[:space:]]+JXR_VERSION_MAJOR' $(VERSION_H))
+GET_VER_MINOR = $(shell grep -E 'define[[:space:]]+JXR_VERSION_MINOR' $(VERSION_H))
+GET_VER_PATCH = $(shell grep -E 'define[[:space:]]+JXR_VERSION_PATCH' $(VERSION_H))
+JXR_VERSION_MAJOR := $(strip $(word 3,$(GET_VER_MAJOR)))
+JXR_VERSION_MINOR := $(strip $(word 3,$(GET_VER_MINOR)))
+JXR_VERSION_PATCH := $(strip $(word 3,$(GET_VER_PATCH)))
 JXR_VERSION := $(JXR_VERSION_MAJOR).$(JXR_VERSION_MINOR).$(JXR_VERSION_PATCH)
 
 ## Are we building shared?
