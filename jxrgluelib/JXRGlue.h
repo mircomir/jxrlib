@@ -640,7 +640,7 @@ ERR PKFreeAligned(void** ppv);
 //--------------- JXR 1.3.9+ -------------------------------------
 
 // Sets the maximum allocable memory (in bytes) for PKAlloc/PKAllocAligned (0 means unlimited (default)).
-// Warning: The parameter setting is not atomic.
+// NOTE: Memory limits are used for decoding only.
 ERR PKAlloc_SetLimit(size_t cb);
 // Gets the maximum allocable memory (in bytes) for PKAlloc/PKAllocAligned
 ERR PKAlloc_GetLimit(size_t *pcb);

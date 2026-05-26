@@ -15,9 +15,10 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
-- V1.4.0; 2026/05/22
-  - Initial support for memory allocation limit via `PKAlloc_SetLimit` / `PKAlloc_GetLimit` experimental API
+- V1.4.0; 2026/05/26
+  - Support for memory allocation limit via `PKAlloc_SetLimit` / `PKAlloc_GetLimit` API
   - Added `PKLibJxr_GetVersion` API to get library version
+  - Unmaintained ASM X86 code moved to 'Unmaintained' folder (it should not be used)
 - V1.3.8; 2026/05/21
   - Fix DPI conversion accuracy in BMPs
   - Fix compilation error using GCC 15.2

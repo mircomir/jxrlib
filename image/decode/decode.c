@@ -39,6 +39,7 @@ Revision History:
 *******************************************************************************/
 #include "strcodec.h"
 #include "decode.h"
+#include "memory_lim.h"
 
 #ifdef MEM_TRACE
 #define TRACE_MALLOC    1
@@ -121,7 +122,7 @@ Int AllocateCodingContextDec(CWMImageStrCodec *pSC, Int iNumContexts)
     if (pSC == NULL)
         return ICERR_ERROR;
 
-    pSC->m_pCodingContext = malloc (iNumContexts * sizeof (CCodingContext));
+    pSC->m_pCodingContext = malloc_lim (iNumContexts * sizeof (CCodingContext));
     if (pSC->m_pCodingContext == NULL) {
         pSC->cNumCodingContext = 0;
         return ICERR_ERROR;

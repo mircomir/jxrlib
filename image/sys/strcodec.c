@@ -27,6 +27,7 @@
 //*@@@---@@@@******************************************************************
 #include "strcodec.h"
 #include "perfTimer.h"
+#include "memory_lim.h"
 
 #ifdef MEM_TRACE
 #define TRACE_MALLOC    1
@@ -245,7 +246,7 @@ Int IDPEmpty(CWMImageStrCodec* pSC)
 
 ERR WMPAlloc(void** ppv, size_t cb)
 {
-    *ppv = calloc(1, cb);
+    *ppv = calloc_lim(1, cb);
     return *ppv ? WMP_errSuccess : WMP_errOutOfMemory;
 }
 
@@ -732,7 +733,7 @@ Int allocateBitIOInfo(CWMImageStrCodec* pSC)
     if(cNumBitIO > 0){
         U32 i = 0;
         size_t cb = sizeof(BitIOInfo) * cNumBitIO + (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 * cNumBitIO;
-        U8* pb = (U8*)malloc(cb);
+        U8* pb = (U8*)malloc_lim(cb);
 
         if (NULL == pb) return ICERR_ERROR;
         memset(pb, 0, cb);
@@ -749,7 +750,7 @@ Int allocateBitIOInfo(CWMImageStrCodec* pSC)
         // allocate index table
         if(cNumBitIO > MAX_TILES * 4 || pSC->WMISCP.cNumOfSliceMinus1H >= MAX_TILES)
             return ICERR_ERROR;
-        pSC->pIndexTable = malloc(cNumBitIO * (pSC->WMISCP.cNumOfSliceMinus1H + 1) * sizeof(size_t));
+        pSC->pIndexTable = malloc_lim(cNumBitIO * (pSC->WMISCP.cNumOfSliceMinus1H + 1) * sizeof(size_t));
         if(NULL == pSC->pIndexTable) return ICERR_ERROR;
     }
 
@@ -795,7 +796,7 @@ Int allocateTileInfo(CWMImageStrCodec * pSC)
 
     if(pSC->WMISCP.cNumOfSliceMinus1V >= MAX_TILES)
         return ICERR_ERROR;
-    pSC->pTile = (CWMITile *)malloc((pSC->WMISCP.cNumOfSliceMinus1V + 1) * sizeof(CWMITile));
+    pSC->pTile = (CWMITile *)malloc_lim((pSC->WMISCP.cNumOfSliceMinus1V + 1) * sizeof(CWMITile));
     if(pSC->pTile == NULL)
         return ICERR_ERROR;
     memset(pSC->pTile, 0, (pSC->WMISCP.cNumOfSliceMinus1V + 1) * sizeof(CWMITile));
@@ -844,7 +845,7 @@ Int allocateQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS], size_t cChannel,
     
     if(cQP > 16 || cChannel > MAX_CHANNELS)
         return ICERR_ERROR;
-    pQuantizer[0] = (CWMIQuantizer *)malloc(cQP * sizeof(CWMIQuantizer) * cChannel);
+    pQuantizer[0] = (CWMIQuantizer *)malloc_lim(cQP * sizeof(CWMIQuantizer) * cChannel);
     if(pQuantizer[0] == NULL)
         return ICERR_ERROR;
 
