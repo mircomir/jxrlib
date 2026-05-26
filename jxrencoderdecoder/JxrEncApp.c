@@ -1,14 +1,14 @@
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright Â© Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
-// • Redistributions of source code must retain the above copyright notice,
+//
+// â€¢ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// â€¢ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -55,10 +55,11 @@ void WmpEncAppUsage(const char* szExe)
     printf(CRLF);
     printf("%s [options]..." CRLF, szExe);
     printf(CRLF);
-    printf("  -i input.bmp/tif/hdr         Input image file name" CRLF);
+    printf("  -i input.bmp/hdr/pnm/tif     Input image file name" CRLF);
     printf("                               bmp: <=8bpc, BGR" CRLF);
-    printf("                               tif: >=8bpc, RGB" CRLF);
     printf("                               hdr: 32bppRGBE only" CRLF);
+    printf("                               pnm: >=8bpc, RGB" CRLF);
+    printf("                               tif: >=8bpc, RGB" CRLF);
     printf(CRLF);
 
     printf("  -o output.jxr                Output JPEG XR file name" CRLF);
