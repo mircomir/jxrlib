@@ -7,7 +7,12 @@
 
 #include "memory_lim.h"
 
+#if defined(__STDC_VERSION__) && !defined(__STDC_NO_ATOMICS__) && (__STDC_VERSION__ >= 201112L)
+#include <stdatomic.h>
+static atomic_size_t CB_PKAlloc_MaxBytes = 0;
+#else
 static size_t CB_PKAlloc_MaxBytes = 0;
+#endif
 
 void alloc_set_lim(size_t max_size)
 {

@@ -27,7 +27,6 @@ void *calloc_lim(size_t count, size_t size);
  * \brief alloc_set_lim
  * Sets the maximum allocable memory (in bytes) for malloc_lim() and calloc_lim().
  * \param max_size The maximum allocable memory (in bytes). 0 means unlimited (default).
- * \warning The parameter setting is not atomic.
  */
 void alloc_set_lim(size_t max_size);
 
