@@ -465,11 +465,6 @@ ERR PKCodecFactory_CreateDecoderFromFile(const char* szFilename, PKImageDecode**
     pDecoder->fStreamOwner = !0;
 
 Cleanup:
-#if 0 // disabled due to possible wrong usage of the library in the past
-    if(pStream && pDecoder && !pDecoder->fStreamOwner) {
-        CloseWS_File(&pStream); // MMIR: Fix memory leak on error
-    }
-#endif
     return err;
 }
 
