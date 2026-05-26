@@ -29,6 +29,7 @@
 #include "windowsmediaphoto.h"
 #include "strcodec.h"
 #include "decode.h"
+#include "memory_lim.h"
 
 EXTERN_C Void freePredInfo(CWMImageStrCodec *);
 
@@ -513,7 +514,7 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
     cUnit = (pSCDec->m_param.cfColorFormat == YUV_420 ? 384 : (pSCDec->m_param.cfColorFormat == YUV_422 ? 512 : 256 * pSCDec->m_param.cNumChannels));
     if(cUnit > 256 * MAX_CHANNELS)
         return ICERR_ERROR;
-    pSCDec->p1MBbuffer[0] = pMBBuf = (PixelI *)malloc(cUnit * sizeof(PixelI));
+    pSCDec->p1MBbuffer[0] = pMBBuf = (PixelI *)malloc_lim(cUnit * sizeof(PixelI));
     if(pMBBuf == NULL)
         return ICERR_ERROR;
     pSCDec->p1MBbuffer[1] = pSCDec->p1MBbuffer[0] + 256;
@@ -621,17 +622,17 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
     }
 
     if(oO != O_NONE){
-        pFrameBuf = (PixelI *)malloc(pSCEnc->cmbWidth * pSCEnc->cmbHeight * cUnit * sizeof(PixelI));
+        pFrameBuf = (PixelI *)malloc_lim(pSCEnc->cmbWidth * pSCEnc->cmbHeight * cUnit * sizeof(PixelI));
         if(pFrameBuf == NULL || (pSCEnc->cmbWidth * pSCEnc->cmbHeight * cUnit * sizeof(PixelI) < pSCEnc->cmbWidth * pSCEnc->cmbHeight * cUnit))
             return ICERR_ERROR;
-        pMBInfo = (CWMIMBInfo *)malloc(pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo));
+        pMBInfo = (CWMIMBInfo *)malloc_lim(pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo));
         if(pMBInfo == NULL || (pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo) < pSCEnc->cmbWidth * pSCEnc->cmbHeight))
             return ICERR_ERROR;
         if(pParam->uAlphaMode > 0){ // alpha channel
-            pFrameBufAlpha = (PixelI *)malloc(pSCEnc->cmbWidth * pSCEnc->cmbHeight * 256 * sizeof(PixelI));
+            pFrameBufAlpha = (PixelI *)malloc_lim(pSCEnc->cmbWidth * pSCEnc->cmbHeight * 256 * sizeof(PixelI));
             if(pFrameBufAlpha == NULL || (pSCEnc->cmbWidth * pSCEnc->cmbHeight * 256 * sizeof(PixelI) < pSCEnc->cmbWidth * pSCEnc->cmbHeight * 256))
                 return ICERR_ERROR;
-            pMBInfoAlpha = (CWMIMBInfo *)malloc(pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo));
+            pMBInfoAlpha = (CWMIMBInfo *)malloc_lim(pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo));
             if(pMBInfoAlpha == NULL || (pSCEnc->cmbWidth * pSCEnc->cmbHeight * sizeof(CWMIMBInfo) < pSCEnc->cmbWidth * pSCEnc->cmbHeight))
                 return ICERR_ERROR;
         }
@@ -658,7 +659,7 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
         WriteWMIHeader(pSCEnc);
     }
     else{
-        pTileQPInfo = (CTileQPInfo *)malloc((oO == O_NONE ? 1 : (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1)) * sizeof( CTileQPInfo));
+        pTileQPInfo = (CTileQPInfo *)malloc_lim((oO == O_NONE ? 1 : (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1)) * sizeof( CTileQPInfo));
         if(pTileQPInfo == NULL || ((oO == O_NONE ? 1 : (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1)) * sizeof( CTileQPInfo) < (oO == O_NONE ? 1 : (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1))))
             return ICERR_ERROR;
         
@@ -693,7 +694,7 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
         size_t cfDec = ((pSCDec->WMISCP.bfBitstreamFormat == SPATIAL || sbDec == SB_DC_ONLY) ? 1 : (sbDec == SB_NO_HIGHPASS ? 2 : (sbDec == SB_NO_FLEXBITS ? 3 : 4)));
         size_t k, l = 0;
 
-        pSCEnc->pIndexTable = (size_t *)malloc(sizeof(size_t) * (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1) * cfEnc);
+        pSCEnc->pIndexTable = (size_t *)malloc_lim(sizeof(size_t) * (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1) * cfEnc);
 
         if(pSCEnc->pIndexTable == NULL || cfEnc > cfDec)
             return ICERR_ERROR;

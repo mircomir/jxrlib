@@ -27,6 +27,7 @@
 //*@@@---@@@@******************************************************************
 
 #include "strcodec.h"
+#include "memory_lim.h"
 
 #define ORIENT_WEIGHT 4
 
@@ -134,7 +135,7 @@ Int allocatePredInfo(CWMImageStrCodec *pSC)
     if(b32Bit) // integer overlow/underflow check for 32-bit system
         if(((mbWidth >> 16) * iChannels * 2 * sizeof(CWMIPredInfo)) & 0xffff0000)
             return ICERR_ERROR;    
-    pMemory = (CWMIPredInfo *)malloc(mbWidth * iChannels * 2 * sizeof(CWMIPredInfo));
+    pMemory = (CWMIPredInfo *)malloc_lim(mbWidth * iChannels * 2 * sizeof(CWMIPredInfo));
     if (pMemory == NULL)
         return ICERR_ERROR;
 

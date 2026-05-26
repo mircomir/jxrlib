@@ -91,7 +91,7 @@ LIBS=-L$(DIR_BUILD) $(shell echo $(LIBRARIES) | sed -e 's%$(DIR_BUILD)/lib\([^ ]
 ## Common files
 ##
 
-SRC_SYS=adapthuff.c image.c strcodec.c strPredQuant.c strTransform.c perfTimerANSI.c
+SRC_SYS=adapthuff.c image.c strcodec.c strPredQuant.c strTransform.c perfTimerANSI.c memory_lim.c
 OBJ_SYS=$(patsubst %.c, $(DIR_BUILD)/$(DIR_SYS)/%.o, $(SRC_SYS))
  
 $(DIR_BUILD)/$(DIR_SYS)/%.o: $(DIR_SRC)/$(DIR_SYS)/%.c

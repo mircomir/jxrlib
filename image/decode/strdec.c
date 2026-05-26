@@ -30,6 +30,7 @@
 #include "strTransform.h"
 #include <math.h>
 #include "perfTimer.h"
+#include "memory_lim.h"
 
 #ifdef MEM_TRACE
 #define TRACE_MALLOC    1
@@ -2821,7 +2822,7 @@ Int initLookupTables(CWMImageStrCodec* pSC)
         i =cStrideX, cStrideX = cStrideY, cStrideY = i;
 
     pSC->m_Dparam->cbOffsetX = w * sizeof(size_t);
-    pSC->m_Dparam->pOffsetX = (size_t *)malloc(pSC->m_Dparam->cbOffsetX);
+    pSC->m_Dparam->pOffsetX = (size_t *)malloc_lim(pSC->m_Dparam->cbOffsetX);
     if(pSC->m_Dparam->pOffsetX == NULL || pSC->m_Dparam->cbOffsetX < w)
         return ICERR_ERROR;
     /*
@@ -2838,7 +2839,7 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     }
 
     pSC->m_Dparam->cbOffsetY = h * sizeof(size_t);
-    pSC->m_Dparam->pOffsetY = (size_t *)malloc(pSC->m_Dparam->cbOffsetY);
+    pSC->m_Dparam->pOffsetY = (size_t *)malloc_lim(pSC->m_Dparam->cbOffsetY);
     if(pSC->m_Dparam->pOffsetY == NULL || pSC->m_Dparam->cbOffsetY < h)
         return ICERR_ERROR;
     /*
@@ -2919,8 +2920,8 @@ Int StrDecInit(CWMImageStrCodec* pSC)
     pSC->m_bUVResolutionChange = ((cfExt != Y_ONLY) && ((cfInt == YUV_420 && cfExt != YUV_420) ||
         (cfInt == YUV_422 && cfExt != YUV_422))) && !pSC->WMISCP.bYUVData;
     if(pSC->m_bUVResolutionChange){
-        pSC->pResU = (PixelI *)malloc((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
-        pSC->pResV = (PixelI *)malloc((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
+        pSC->pResU = (PixelI *)malloc_lim((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
+        pSC->pResV = (PixelI *)malloc_lim((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
         if(pSC->pResU == NULL || pSC->pResV == NULL || (cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI) < pSC->cmbWidth){
             return ICERR_ERROR;
         }
@@ -3495,7 +3496,7 @@ Int ImageStrDecInit(
     }
     cb += i * cMacBlock;
 
-    pb = malloc(cb);
+    pb = malloc_lim(cb);
     if(pb == NULL)
         return WMP_errOutOfMemory;
     memset(pb, 0, cb);
@@ -3544,7 +3545,7 @@ Int ImageStrDecInit(
         //================================================
         cb = sizeof(*pNextSC) + (128 - 1) + cbMacBlockStride * cMacBlock * 2;
         // if primary image is safe to allocate, alpha channel is certainly safe
-        pb = malloc(cb);
+        pb = malloc_lim(cb);
         if(pb == NULL)
             return WMP_errOutOfMemory;
         memset(pb, 0, cb);
