@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.3.9; 2026/05/26
+  - Fix possible compilation error under macOS
 - V1.3.8; 2026/05/21
   - Fix DPI conversion accuracy in BMPs
   - Fix compilation error using GCC 15.2

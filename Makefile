@@ -31,7 +31,7 @@ build: all
 
 CC=cc
 
-JXR_VERSION=1.3.8
+JXR_VERSION=1.3.9
 
 DIR_SRC=$(CURDIR)
 DIR_SYS=image/sys
