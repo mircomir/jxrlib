@@ -122,12 +122,11 @@ Int AllocateCodingContextDec(CWMImageStrCodec *pSC, Int iNumContexts)
     if (pSC == NULL)
         return ICERR_ERROR;
 
-    pSC->m_pCodingContext = malloc_lim (iNumContexts * sizeof (CCodingContext));
+    pSC->m_pCodingContext = calloc_lim (iNumContexts, sizeof (CCodingContext));
     if (pSC->m_pCodingContext == NULL) {
         pSC->cNumCodingContext = 0;
         return ICERR_ERROR;
     }
-    memset (pSC->m_pCodingContext, 0, iNumContexts * sizeof (CCodingContext));
 
     pSC->cNumCodingContext = iNumContexts;
     iCBPSize = (pSC->m_param.cfColorFormat == Y_ONLY || pSC->m_param.cfColorFormat == NCOMPONENT

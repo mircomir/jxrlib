@@ -345,8 +345,10 @@ Int getROI(CWMImageInfo * pII, CCoreParameters * pCore, CWMIStrCodecParam * pSCP
     if(iTile == NULL)
         return ICERR_ERROR;
     
-    if(pParam->cLeftX + pParam->cWidth > pII->cWidth || pParam->cTopY + pParam->cHeight > pII->cHeight) // invalid region
+    if(pParam->cLeftX + pParam->cWidth > pII->cWidth || pParam->cTopY + pParam->cHeight > pII->cHeight) { // invalid region
+        free(iTile);
         return ICERR_ERROR;
+    }
 
     cWidth = pParam->cWidth, cHeight = pParam->cHeight;
     iLeft = pParam->cLeftX + pCore->cExtraPixelsLeft, iTop = pParam->cTopY + pCore->cExtraPixelsTop;
@@ -491,9 +493,8 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
         return ICERR_ERROR;
 
     // initialize decoder
-    if((pSCDec = (CWMImageStrCodec *)malloc(sizeof(CWMImageStrCodec))) == NULL)
+    if((pSCDec = (CWMImageStrCodec *)calloc(1, sizeof(CWMImageStrCodec))) == NULL)
         return ICERR_ERROR;
-    memset(pSCDec, 0, sizeof(CWMImageStrCodec));
 
     pSCDec->WMISCP.pWStream = pStreamIn;
     if(ReadWMIHeader(&pSCDec->WMII, &pSCDec->WMISCP, &pSCDec->m_param) != ICERR_OK)
@@ -546,10 +547,9 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
     else
         pParam->uAlphaMode = 0;
 
-    pIOHeaderDec = (U8 *)malloc((PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 + sizeof(BitIOInfo));
+    pIOHeaderDec = (U8 *)calloc(1, (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 + sizeof(BitIOInfo));
     if(pIOHeaderDec == NULL)
         return ICERR_ERROR;
-    memset(pIOHeaderDec, 0, (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 + sizeof(BitIOInfo));
     pSCDec->pIOHeader = (BitIOInfo *)((U8 *)ALIGNUP(pIOHeaderDec, PACKETLENGTH * 4) + PACKETLENGTH * 2);
     
     if(StrIODecInit(pSCDec) != ICERR_OK)
@@ -564,9 +564,8 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
     }
 
     // initialize encoder
-    if((pSCEnc = (CWMImageStrCodec *)malloc(sizeof(CWMImageStrCodec))) == NULL)
+    if((pSCEnc = (CWMImageStrCodec *)calloc(1, sizeof(CWMImageStrCodec))) == NULL)
         return ICERR_ERROR;
-    memset(pSCEnc, 0, sizeof(CWMImageStrCodec));
 
     pSCEnc->WMII = pSCDec->WMII;
     pSCEnc->WMISCP = pSCDec->WMISCP;
@@ -584,10 +583,11 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
         pSCEnc->WMISCP.sbSubband = pParam->sbSubband;
     pSCEnc->m_bSecondary = FALSE;
 
-    pIOHeaderEnc = (U8 *)malloc((PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 + sizeof(BitIOInfo));
-    if(pIOHeaderEnc == NULL)
+    pIOHeaderEnc = (U8 *)calloc(1, (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 * sizeof(BitIOInfo));
+    if(pIOHeaderEnc == NULL) {
+        free(pSCEnc);
         return ICERR_ERROR;
-    memset(pIOHeaderEnc, 0, (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 + sizeof(BitIOInfo));
+    }
     pSCEnc->pIOHeader = (BitIOInfo *)((U8 *)ALIGNUP(pIOHeaderEnc, PACKETLENGTH * 4) + PACKETLENGTH * 2);
     
     for(i = 0; i < pSCEnc->m_param.cNumChannels; i ++)
@@ -695,7 +695,6 @@ Int WMPhotoTranscode(struct WMPStream * pStreamIn, struct WMPStream * pStreamOut
         size_t k, l = 0;
 
         pSCEnc->pIndexTable = (size_t *)malloc_lim(sizeof(size_t) * (pSCEnc->WMISCP.cNumOfSliceMinus1H + 1) * (pSCEnc->WMISCP.cNumOfSliceMinus1V + 1) * cfEnc);
-
         if(pSCEnc->pIndexTable == NULL || cfEnc > cfDec)
             return ICERR_ERROR;
 

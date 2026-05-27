@@ -733,10 +733,10 @@ Int allocateBitIOInfo(CWMImageStrCodec* pSC)
     if(cNumBitIO > 0){
         U32 i = 0;
         size_t cb = sizeof(BitIOInfo) * cNumBitIO + (PACKETLENGTH * 4 - 1) + PACKETLENGTH * 4 * cNumBitIO;
-        U8* pb = (U8*)malloc_lim(cb);
+        U8* pb = (U8*)calloc_lim(1, cb);
 
-        if (NULL == pb) return ICERR_ERROR;
-        memset(pb, 0, cb);
+        if (NULL == pb)
+            return ICERR_ERROR;
 
         pSC->m_ppBitIO = (BitIOInfo**)pb;
         pb += sizeof(BitIOInfo) * cNumBitIO;
@@ -796,10 +796,9 @@ Int allocateTileInfo(CWMImageStrCodec * pSC)
 
     if(pSC->WMISCP.cNumOfSliceMinus1V >= MAX_TILES)
         return ICERR_ERROR;
-    pSC->pTile = (CWMITile *)malloc_lim((pSC->WMISCP.cNumOfSliceMinus1V + 1) * sizeof(CWMITile));
+    pSC->pTile = (CWMITile *)calloc_lim((pSC->WMISCP.cNumOfSliceMinus1V + 1), sizeof(CWMITile));
     if(pSC->pTile == NULL)
         return ICERR_ERROR;
-    memset(pSC->pTile, 0, (pSC->WMISCP.cNumOfSliceMinus1V + 1) * sizeof(CWMITile));
 
     for(i = 0; i <= pSC->WMISCP.cNumOfSliceMinus1V; i ++)
         pSC->pTile[i].cNumQPHP = pSC->pTile[i].cNumQPLP = 1, pSC->pTile[i].cBitsHP = pSC->pTile[i].cBitsLP = 0;

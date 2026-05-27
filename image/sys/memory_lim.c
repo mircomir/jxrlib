@@ -36,7 +36,7 @@ void *malloc_lim(size_t size)
 void *calloc_lim(size_t count, size_t size)
 {
     size_t cbMax = alloc_get_lim();
-    if(cbMax && size > cbMax) {
+    if(cbMax && (count * size) > cbMax) {
         return NULL;
     }
     return calloc(count, size);

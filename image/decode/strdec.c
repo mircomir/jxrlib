@@ -2821,8 +2821,10 @@ Int initLookupTables(CWMImageStrCodec* pSC)
     if(pII->oOrientation > O_FLIPVH) // rotated !!
         i =cStrideX, cStrideX = cStrideY, cStrideY = i;
 
-    if(pSC->m_Dparam->pOffsetX)
-        return ICERR_ERROR; // avoid memory leak (happens on corrupted file only)
+    if(pSC->m_Dparam->pOffsetX) {
+        // avoid memory leak: in some files I go back here and reallocate memory, losing the reference
+        free(pSC->m_Dparam->pOffsetX);
+    }
     pSC->m_Dparam->cbOffsetX = w * sizeof(size_t);
     pSC->m_Dparam->pOffsetX = (size_t *)malloc_lim(pSC->m_Dparam->cbOffsetX);
     if(pSC->m_Dparam->pOffsetX == NULL || pSC->m_Dparam->cbOffsetX < w)
@@ -2840,8 +2842,10 @@ Int initLookupTables(CWMImageStrCodec* pSC)
                                               (pSC->m_Dparam->cROIRightX - pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / ((pII->cfColorFormat == YUV_420 || pII->cfColorFormat == YUV_422) ? 2 : 1)) - 1 - i : i) * cStrideX;
     }
 
-    if(pSC->m_Dparam->pOffsetY)
-        return ICERR_ERROR; // avoid memory leak (happens on corrupted file only)
+    if(pSC->m_Dparam->pOffsetY) {
+        // avoid memory leak: in some files I go back here and reallocate memory, losing the reference
+        free(pSC->m_Dparam->pOffsetY);
+    }
     pSC->m_Dparam->cbOffsetY = h * sizeof(size_t);
     pSC->m_Dparam->pOffsetY = (size_t *)malloc_lim(pSC->m_Dparam->cbOffsetY);
     if(pSC->m_Dparam->pOffsetY == NULL || pSC->m_Dparam->cbOffsetY < h)
@@ -3500,10 +3504,9 @@ Int ImageStrDecInit(
     }
     cb += i * cMacBlock;
 
-    pb = malloc_lim(cb);
+    pb = calloc_lim(1, cb);
     if(pb == NULL)
         return WMP_errOutOfMemory;
-    memset(pb, 0, cb);
 
     //================================================
     pSC = (CWMImageStrCodec*)pb; pb += sizeof(*pSC);
@@ -3549,10 +3552,9 @@ Int ImageStrDecInit(
         //================================================
         cb = sizeof(*pNextSC) + (128 - 1) + cbMacBlockStride * cMacBlock * 2;
         // if primary image is safe to allocate, alpha channel is certainly safe
-        pb = malloc_lim(cb);
+        pb = calloc_lim(1, cb);
         if(pb == NULL)
             return WMP_errOutOfMemory;
-        memset(pb, 0, cb);
         //================================================
         pNextSC = (CWMImageStrCodec*)pb; pb += sizeof(*pNextSC);
 

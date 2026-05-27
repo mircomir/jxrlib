@@ -134,7 +134,7 @@ Void Clean (CAdaptiveHuffman *pAdHuff)
 
 CAdaptiveHuffman *Allocate (Int iNSymbols, CODINGMODE cm)
 {
-    CAdaptiveHuffman *pAdHuff = (CAdaptiveHuffman *) malloc (sizeof (CAdaptiveHuffman));
+    CAdaptiveHuffman *pAdHuff = (CAdaptiveHuffman *) calloc (1, sizeof (CAdaptiveHuffman));
 
     UNREFERENCED_PARAMETER(cm);
 
@@ -143,7 +143,6 @@ CAdaptiveHuffman *Allocate (Int iNSymbols, CODINGMODE cm)
     if (iNSymbols > 255 || iNSymbols <= 0)
         goto ErrorExit;
 
-    memset (pAdHuff, 0, sizeof (CAdaptiveHuffman));
     pAdHuff->m_iNSymbols = iNSymbols;
 
     pAdHuff->m_pDelta = NULL;
