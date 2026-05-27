@@ -454,6 +454,15 @@ ERR PKCodecFactory_CreateDecoderFromFile(const char* szFilename, PKImageDecode**
     pDecoder->fStreamOwner = !0;
 
 Cleanup:
+    // Fix possible memory leak: when pDecoder->Initialize fails, fStreamOwner is not
+    // set to 1 and the stream is not freed. Not sure why fStreamOwner is set outside
+    // the Decode_Initialize* function so, I fix it here.
+    if(pStream && err != WMP_errSuccess) {
+        if(pDecoder && pDecoder->pStream == pStream)
+            pDecoder->fStreamOwner = !0;
+        else
+            PKFree((void **)&pStream);
+    }
     return err;
 }
 
