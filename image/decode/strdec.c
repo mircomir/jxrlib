@@ -3832,6 +3832,7 @@ Int ImageStrDecTerm(
     PERFTIMER_DELETE(pSC->m_fMeasurePerf, pSC->m_ptEncDecPerf);
     PERFTIMER_DELETE(pSC->m_fMeasurePerf, pSC->m_ptEndToEndPerf);
 
+    free(pSC->m_pNextSC);
     free(pSC);
 
     return ICERR_OK;
