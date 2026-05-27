@@ -2001,6 +2001,7 @@ ERR PKImageDecode_Copy_WMP(
 #ifdef REENTRANT_MODE
         if (0 == pID->WMP.DecoderCurrMBRow)
         {
+            FailIf(NULL == pID->WMP.wmiSCP.pWStream, WMP_errFail);
             Call(pID->WMP.wmiSCP.pWStream->GetPos(pID->WMP.wmiSCP.pWStream, &(pID->WMP.cMarker)));
             FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI, &pID->WMP.wmiSCP, &pID->WMP.ctxSC), WMP_errFail);
         }
@@ -2017,6 +2018,7 @@ ERR PKImageDecode_Copy_WMP(
             pID->WMP.cLinesCropped = 0;
             pID->WMP.fFirstNonZeroDecode = FALSE;
             FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC), WMP_errFail);
+            FailIf(NULL == pID->WMP.wmiSCP.pWStream, WMP_errFail);
             Call(pID->WMP.wmiSCP.pWStream->SetPos(pID->WMP.wmiSCP.pWStream, pID->WMP.cMarker));
             FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI, &pID->WMP.wmiSCP, &pID->WMP.ctxSC), WMP_errFail);
         }
