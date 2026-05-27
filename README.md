@@ -18,9 +18,9 @@ all the most common formats.
 - V1.4.0; 2026/05/27
   - Support for memory allocation limit via `PKAlloc_SetLimit` / `PKAlloc_GetLimit` API
   - Added `PKLibJxr_GetVersion` API to get library version
-  - Unmaintained ASM X86 code moved to 'Unmaintained' folder (it should not be used)
+  - Unmaintained ASM X86 code moved to `Unmaintained` folder (it should not be used)
   - Fix memory leaks (OSS Fuzz [396171604](https://issues.oss-fuzz.com/issues/396171604), [511636124](https://issues.oss-fuzz.com/issues/511636124))
-  - Fix crash on `PKImageDecode_Copy_WMP`
+  - Fix crash in `PKImageDecode_Copy_WMP` (testcase `s957297735_f50_tp5-testcard_gray16.jxr`)
 - V1.3.8; 2026/05/21
   - Fix DPI conversion accuracy in BMPs
   - Fix compilation error using GCC 15.2
