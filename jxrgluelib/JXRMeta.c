@@ -724,11 +724,24 @@ ERR ReadPropvar(__in_ecount(1) struct WMPStream* pWS,
                 __out_win DPKPROPVARIANT *pvar)
 {
     ERR err = WMP_errSuccess;
-    // U8 *pbData = NULL;
 
-    memset(pvar, 0, sizeof(*pvar));
     if (uCount == 0)
         goto Cleanup; // Nothing to read in here
+
+    // Fix memory leak
+    //
+    // Setting the data here to zero doesn't make much sense:
+    // - all data is allocated with calloc (so it's already zero)
+    // - a corrupt file with duplicate tags causes a memory leak (sets to zero any pointers already allocated without checking)
+    //
+    // memset(pvar, 0, sizeof(*pvar));
+
+    // If already allocated, then the file is definitely corrupt (tags present multiple times):
+    // avoids memory leak returning error.
+    if(pvar->VT.pszVal || pvar->VT.pwszVal || pvar->VT.pbVal) {
+        err = WMP_errFail;
+        goto Cleanup;
+    }
 
     switch (uType)
     {
