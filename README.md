@@ -20,6 +20,7 @@ all the most common formats.
   - Added `PKLibJxr_GetVersion` API to get library version
   - Unmaintained ASM X86 code moved to 'Unmaintained' folder (it should not be used)
   - Fix Direct-leak in `ImageStrDecInit` (OSS Fuzz [396171604](https://issues.oss-fuzz.com/issues/396171604))
+  - Fix Direct-leak in `ReadPropvar` (OSS Fuzz [511636124](https://issues.oss-fuzz.com/issues/511636124))
 - V1.3.8; 2026/05/21
   - Fix DPI conversion accuracy in BMPs
   - Fix compilation error using GCC 15.2
