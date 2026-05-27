@@ -3500,10 +3500,9 @@ Int ImageStrDecInit(
     }
     cb += i * cMacBlock;
 
-    pb = malloc_lim(cb);
+    pb = calloc_lim(1, cb);
     if(pb == NULL)
         return WMP_errOutOfMemory;
-    memset(pb, 0, cb);
 
     //================================================
     pSC = (CWMImageStrCodec*)pb; pb += sizeof(*pSC);
@@ -3549,10 +3548,9 @@ Int ImageStrDecInit(
         //================================================
         cb = sizeof(*pNextSC) + (128 - 1) + cbMacBlockStride * cMacBlock * 2;
         // if primary image is safe to allocate, alpha channel is certainly safe
-        pb = malloc_lim(cb);
+        pb = calloc_lim(1, cb);
         if(pb == NULL)
             return WMP_errOutOfMemory;
-        memset(pb, 0, cb);
         //================================================
         pNextSC = (CWMImageStrCodec*)pb; pb += sizeof(*pNextSC);
 

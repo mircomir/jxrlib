@@ -435,19 +435,19 @@ Int StrIOEncInit(CWMImageStrCodec* pSC)
 #endif
         char * pFilename;
 
-        pSC->ppWStream = (struct WMPStream **)malloc(pSC->cNumBitIO * sizeof(struct WMPStream *));
-        if(pSC->ppWStream == NULL) return ICERR_ERROR;
-        memset(pSC->ppWStream, 0, pSC->cNumBitIO * sizeof(struct WMPStream *));
+        pSC->ppWStream = (struct WMPStream **)calloc(pSC->cNumBitIO, sizeof(struct WMPStream *));
+        if(pSC->ppWStream == NULL)
+            return ICERR_ERROR;
 
         if (pSC->cmbHeight * pSC->cmbWidth * pSC->WMISCP.cChannel >= MAX_MEMORY_SIZE_IN_WORDS) {
 #ifdef _WINDOWS_
-            pSC->ppTempFile = (TCHAR **)malloc(pSC->cNumBitIO * sizeof(TCHAR *));
-            if(pSC->ppTempFile == NULL) return ICERR_ERROR;
-            memset(pSC->ppTempFile, 0, pSC->cNumBitIO * sizeof(TCHAR *)); 
+            pSC->ppTempFile = (TCHAR **)calloc(pSC->cNumBitIO, sizeof(TCHAR *));
+            if(pSC->ppTempFile == NULL)
+                return ICERR_ERROR;
 #else
-            pSC->ppTempFile = (char **)malloc(pSC->cNumBitIO * sizeof(char *));
-            if(pSC->ppTempFile == NULL) return ICERR_ERROR;
-            memset(pSC->ppTempFile, 0, pSC->cNumBitIO * sizeof(char *));
+            pSC->ppTempFile = (char **)calloc(pSC->cNumBitIO, sizeof(char *));
+            if(pSC->ppTempFile == NULL)
+                return ICERR_ERROR;
 #endif
         }
 
@@ -1382,12 +1382,11 @@ Int ImageStrEncInit(
     i *= cMacBlock * 2;
     cb += i;
 
-    pb = malloc(cb);
+    pb = calloc(1, cb);
     if (NULL == pb)
     {
         goto ErrorExit;
     }
-    memset(pb, 0, cb);
 
     //================================================
     pSC = (CWMImageStrCodec*)pb; pb += sizeof(*pSC);
@@ -1438,12 +1437,11 @@ Int ImageStrEncInit(
         // 1. allocate new pNextSC info
         //================================================
         cb = sizeof(*pNextSC) + (128 - 1) + cbMacBlockStride * cMacBlock * 2;
-        pb = malloc(cb);
+        pb = calloc(1, cb);
         if (NULL == pb)
         {
             goto ErrorExit;
         }
-        memset(pb, 0, cb);
         //================================================
         pNextSC = (CWMImageStrCodec*)pb; pb += sizeof(*pNextSC);
 
