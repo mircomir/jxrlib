@@ -2835,7 +2835,7 @@ Int initLookupTables(CWMImageStrCodec* pSC)
         iFirst = (pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale - 1) / pSC->m_Dparam->cThumbnailScale;
     for(i = 0; i + iFirst < w; i ++){
         pSC->m_Dparam->pOffsetX[i + iFirst] = pII->cLeadingPadding + (bReverse ? (pSC->m_Dparam->bDecodeFullFrame ? w :
-    (pSC->m_Dparam->cROIRightX - pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / ((pII->cfColorFormat == YUV_420 || pII->cfColorFormat == YUV_422) ? 2 : 1)) - 1 - i : i) * cStrideX;
+                                              (pSC->m_Dparam->cROIRightX - pSC->m_Dparam->cROILeftX + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / ((pII->cfColorFormat == YUV_420 || pII->cfColorFormat == YUV_422) ? 2 : 1)) - 1 - i : i) * cStrideX;
     }
 
     pSC->m_Dparam->cbOffsetY = h * sizeof(size_t);
@@ -2852,7 +2852,7 @@ Int initLookupTables(CWMImageStrCodec* pSC)
         iFirst = (pSC->m_Dparam->cROITopY + pSC->m_Dparam->cThumbnailScale - 1) / pSC->m_Dparam->cThumbnailScale;
     for(i = 0; i + iFirst < h; i ++){
         pSC->m_Dparam->pOffsetY[i + iFirst] = (bReverse ? (pSC->m_Dparam->bDecodeFullFrame ? h :
-    (pSC->m_Dparam->cROIBottomY - pSC->m_Dparam->cROITopY + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / (pII->cfColorFormat == YUV_420 ? 2 : 1)) - 1 - i : i) * cStrideY;
+                                              (pSC->m_Dparam->cROIBottomY - pSC->m_Dparam->cROITopY + pSC->m_Dparam->cThumbnailScale) / pSC->m_Dparam->cThumbnailScale / (pII->cfColorFormat == YUV_420 ? 2 : 1)) - 1 - i : i) * cStrideY;
     }
 
     return ICERR_OK;
@@ -3014,16 +3014,16 @@ Int StrDecTerm(CWMImageStrCodec* pSC)
 
         if (j == 0) {
             StrIODecTerm(pSC);
+        }
 
-            // free lookup tables for rotation and flipping
-            if(pSC->m_Dparam->pOffsetX != NULL) {
-                free(pSC->m_Dparam->pOffsetX);
-                pSC->m_Dparam->pOffsetX = NULL;
-            }
-            if(pSC->m_Dparam->pOffsetY != NULL) {
-                free(pSC->m_Dparam->pOffsetY);
-                pSC->m_Dparam->pOffsetY = NULL;
-            }
+        // free lookup tables for rotation and flipping
+        if(pSC->m_Dparam->pOffsetX != NULL) {
+            free(pSC->m_Dparam->pOffsetX);
+            pSC->m_Dparam->pOffsetX = NULL;
+        }
+        if(pSC->m_Dparam->pOffsetY != NULL) {
+            free(pSC->m_Dparam->pOffsetY);
+            pSC->m_Dparam->pOffsetY = NULL;
         }
 
         pSC = pSC->m_pNextSC;
@@ -3662,8 +3662,6 @@ Int ImageStrDecDecode(
 #if defined(WMP_OPT_SSE2) || defined(WMP_OPT_CC_DEC) || defined(WMP_OPT_TRFM_DEC)
     StrDecOpt(pSC);
 #endif // OPT defined
-
-
 
     cMBRow = (pSC->m_Dparam->bDecodeFullFrame ? pSC->cmbHeight : ((pSC->m_Dparam->cROIBottomY + 16) >> 4));
 
