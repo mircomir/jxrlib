@@ -246,12 +246,20 @@ Int IDPEmpty(CWMImageStrCodec* pSC)
 
 ERR WMPAlloc(void** ppv, size_t cb)
 {
+    if (ppv == NULL)
+    {
+        return WMP_errInvalidArgument;
+    }
     *ppv = calloc_lim(1, cb);
     return *ppv ? WMP_errSuccess : WMP_errOutOfMemory;
 }
 
 ERR WMPFree(void** ppv)
 {
+    if (ppv == NULL)
+    {
+        return WMP_errInvalidArgument;
+    }
     if (*ppv)
     {
         free(*ppv);

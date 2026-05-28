@@ -417,7 +417,7 @@ ERR BufferCopyIFD(const U8* pbsrc, U32 cbsrc, U32 ofssrc, U8 endian, U8* pbdst, 
                 case 2:
                     for ( j = 0; j < count; j++ )
                     {
-                        U16 w;
+                        U16 w = 0;
                         getbfwbig(pbsrc, cbsrc, ofssrcdata + j * sizeof(U16), &w);
                         setbfw(pbdst, cbdst, ofsdstdata + j * sizeof(U16), w);
                     }
@@ -427,8 +427,8 @@ ERR BufferCopyIFD(const U8* pbsrc, U32 cbsrc, U32 ofssrc, U8 endian, U8* pbdst, 
                     {
                         for ( j = 0; j < count; j++ )
                         {
-                            U32 dwlo;
-                            U32 dwhi;
+                            U32 dwlo = 0;
+                            U32 dwhi = 0;
                             getbfdwbig(pbsrc, cbsrc, ofssrcdata + j * 8, &dwhi);
                             getbfdwbig(pbsrc, cbsrc, ofssrcdata + j * 8 + sizeof(U32), &dwlo);
                             setbfdw(pbdst, cbdst, ofsdstdata + j * 8, dwlo);
@@ -441,7 +441,7 @@ ERR BufferCopyIFD(const U8* pbsrc, U32 cbsrc, U32 ofssrc, U8 endian, U8* pbdst, 
                 case 4:
                     for ( j = 0; j < count; j++ )
                     {
-                        U32 dw;
+                        U32 dw = 0;
                         getbfdwbig(pbsrc, cbsrc, ofssrcdata + j * sizeof(U32), &dw);
                         setbfdw(pbdst, cbdst, ofsdstdata + j * sizeof(U32), dw);
                     }
