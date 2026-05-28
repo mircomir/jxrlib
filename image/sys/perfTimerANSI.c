@@ -29,13 +29,10 @@
 //***************************************************************************
 // Includes
 //***************************************************************************
+#ifndef DISABLE_PERF_MEASUREMENT
 #include <time.h>
 #include "strcodec.h"
 #include "perfTimer.h"
-
-
-#ifndef DISABLE_PERF_MEASUREMENT
-
 
 //***************************************************************************
 // Private Functions

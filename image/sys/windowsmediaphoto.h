@@ -249,9 +249,16 @@ typedef long ERR;
 #define CT_ASSERT(exp, uniq) typedef char __CT_ASSERT__##uniq[(exp) ? 1 : -1] // Caller must provide a unique tag, or this fails to compile under GCC
 
 #if defined(_DEBUG) || defined(DBG)
+
+#if __STDC_VERSION__ >= 201112L
+#define Report(err, szExp, szFile, nLine) \
+    fprintf_s(stderr, "FAILED: %ld=%s" CRLF, (err), (szExp)); \
+    fprintf_s(stderr, "        %s:%ld" CRLF, (szFile), (nLine));
+#else
 #define Report(err, szExp, szFile, nLine) \
     fprintf(stderr, "FAILED: %ld=%s" CRLF, (err), (szExp)); \
-    fprintf(stderr, "        %s:%ld" CRLF, (szFile), (nLine));  \
+    fprintf(stderr, "        %s:%ld" CRLF, (szFile), (nLine));
+#endif // __STDC_VERSION__
 
 #else
 #define Report(err, szExp, szFile, lLine) err = err

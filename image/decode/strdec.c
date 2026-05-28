@@ -795,16 +795,16 @@ static void fixup_Y_ONLY_to_Others(
     cHeight = 0 != pII->cROIHeight ? pII->cROIHeight : pII->cHeight;
 
 #define fixup(type, nCh) \
-for (idxY = 0; idxY < cHeight; ++idxY) \
-{ \
-    type * pT = (type *)((U8*)pBI->pv + pBI->cbStride * idxY); \
-    for (idxX = 0; idxX < cWidth; ++idxX) \
+    for (idxY = 0; idxY < cHeight; ++idxY) \
     { \
-        pT[2] = pT[1] = pT[0]; \
-        pT += nCh; \
+        type * pT = (type *)((U8*)pBI->pv + pBI->cbStride * idxY); \
+        for (idxX = 0; idxX < cWidth; ++idxX) \
+        { \
+            pT[2] = pT[1] = pT[0]; \
+            pT += nCh; \
+        } \
     } \
-} \
-break
+    break
 
     switch (pII->bdBitDepth)
     {
@@ -3451,7 +3451,7 @@ Int ImageStrDecInit(
     CWMImageStrCodec *pSC = NULL, *pNextSC = NULL;
     char* pb = NULL;
     size_t cb = 0, i;
-    Bool bLossyTranscoding = FALSE;
+    // Bool bLossyTranscoding = FALSE;
     Bool bUseHardTileBoundaries = FALSE; //default is soft tile boundaries
     Bool bLessThan64Bit = sizeof(void *) < 8;
 
@@ -3470,8 +3470,8 @@ Int ImageStrDecInit(
     }
 
     bUseHardTileBoundaries = SC.WMISCP.bUseHardTileBoundaries;
-    if(SC.WMII.cfColorFormat == CMYK && pII->cfColorFormat == CF_RGB)
-        bLossyTranscoding = TRUE;
+    // if(SC.WMII.cfColorFormat == CMYK && pII->cfColorFormat == CF_RGB)
+    //     bLossyTranscoding = TRUE;
     if(pSCP->cfColorFormat != CMYK && (pII->cfColorFormat == CMYK))
         return ICERR_ERROR;
 

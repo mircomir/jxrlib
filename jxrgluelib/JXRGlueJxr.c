@@ -1760,8 +1760,13 @@ ERR ParsePFDEntry(
 
         default:
 #if defined(_DEBUG) || defined(DBG)
+#if __STDC_VERSION__ >= 201112L
+            fprintf_s(stderr, "Unrecognized WMPTag: %d(%#x), %d, %d, %#x" CRLF,
+                (int)uTag, (int)uTag, (int)uType, (int)uCount, (int)uValue);
+#else
             fprintf(stderr, "Unrecognized WMPTag: %d(%#x), %d, %d, %#x" CRLF,
                 (int)uTag, (int)uTag, (int)uType, (int)uCount, (int)uValue);
+#endif
 #endif
             break;
     }
