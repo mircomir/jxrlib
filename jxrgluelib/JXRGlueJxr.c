@@ -1817,7 +1817,7 @@ ERR ReadContainer(
     struct WMPStream* pWS = pID->pStream;
     size_t offPos = 0;
 
-    char szSig[3] = {0};
+    char szSig[2] = {0};
     U16 uWmpID = 0;
     U32 offPFD = 0;
     U16 cPFDEntry = 0;
@@ -1829,8 +1829,8 @@ ERR ReadContainer(
 
     //================================
     // Header
-    Call(pWS->Read(pWS, szSig, sizeof(szSig) - 1)); offPos += 2;
-    FailIf(szSig != strstr(szSig, "II"), WMP_errUnsupportedFormat);
+    Call(pWS->Read(pWS, szSig, 2)); offPos += 2;
+    FailIf((szSig[0] != 'I' ||szSig[1] != 'I'), WMP_errUnsupportedFormat);
 
     Call(GetUShort(pWS, offPos, &uWmpID)); offPos += 2;
     FailIf(WMP_valWMPhotoID != (0x00FF & uWmpID), WMP_errUnsupportedFormat);
