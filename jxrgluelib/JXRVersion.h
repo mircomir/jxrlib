@@ -8,7 +8,7 @@
 
 #define JXR_VERSION_MAJOR 1
 #define JXR_VERSION_MINOR 4
-#define JXR_VERSION_PATCH 0
+#define JXR_VERSION_PATCH 1
 
 #define JXR_MAKEVERSION(major, minor, patch) (((major) << 16) | ((minor) << 8) | (patch))
 

@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.4.1; 2026/06/03
+  - Fix Use-of-uninitialized-value in `ReadContainer` (OSS Fuzz [517870853](https://issues.oss-fuzz.com/issues/517870853))
 - V1.4.0; 2026/05/29
   - Support for memory allocation limit via `PKAlloc_SetLimit` / `PKAlloc_GetLimit` API
   - Added `PKLibJxr_GetVersion` API to get library version
