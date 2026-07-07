@@ -646,7 +646,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_8:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U8) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(U8) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -664,7 +664,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -683,7 +683,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(I16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(I16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -702,7 +702,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_16F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(U16) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -720,7 +720,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -739,7 +739,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32S:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(U32) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }
@@ -758,7 +758,7 @@ Void outputNChannel(CWMImageStrCodec * pSC, size_t iFirstRow, size_t iFirstColum
         case BD_32F:
             for(iRow = iFirstRow; iRow < cHeight; iRow ++){
                 for(iColumn = iFirstColumn, iY = pOffsetY[iRow]; iColumn < cWidth; iColumn ++){
-                    if((iY + pOffsetX[iColumn]) * sizeof(float) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
+                    if((iY + pOffsetX[iColumn] + cChannel - 1) * sizeof(float) >= pSC->WMIBI.cbStride * pSC->WMIBI.cLine) { // sanity check!
                         //assert(0);
                         break;
                     }

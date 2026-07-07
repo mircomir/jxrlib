@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.4.2; 2026/07/07
+  - Fix boundary checks in `outputNChannel`
 - V1.4.1; 2026/06/03
   - Fix Use-of-uninitialized-value in `ReadContainer` (OSS Fuzz [517870853](https://issues.oss-fuzz.com/issues/517870853))
 - V1.4.0; 2026/05/29
