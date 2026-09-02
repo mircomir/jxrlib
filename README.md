@@ -15,6 +15,10 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.4.3; 2026/09/02
+  - `tmpnam` security mitigations:
+    - Use a local buffer instead of its internal one
+    - Fail to open file if it exists (requires C11)
 - V1.4.2; 2026/07/07
   - Fix buffer overflow in `outputNChannel` (OSS Fuzz [532002884](https://issues.oss-fuzz.com/issues/532002884))
 - V1.4.1; 2026/06/03

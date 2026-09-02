@@ -482,11 +482,17 @@ Int StrIOEncInit(CWMImageStrCodec* pSC)
                 pSC->ppTempFile[i] = (char *)malloc(FILENAME_MAX * sizeof(char));
                 if(pSC->ppTempFile[i] == NULL) return ICERR_ERROR;
 
-                if ((pFilename = tmpnam(NULL)) == NULL)
-                    return ICERR_ERROR;                
+                char szTmpBuf[L_tmpnam];
+                if ((pFilename = tmpnam(szTmpBuf)) == NULL)
+                    return ICERR_ERROR;
                 strcpy(pSC->ppTempFile[i], pFilename);
 #endif
-                if(CreateWS_File(pSC->ppWStream + i, pFilename, "w+b") != ICERR_OK) return ICERR_ERROR;                
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#   define FOPEN_WRITE_EXCL "w+bx"
+#else
+#   define FOPEN_WRITE_EXCL "w+b"
+#endif
+                if(CreateWS_File(pSC->ppWStream + i, pFilename, FOPEN_WRITE_EXCL) != ICERR_OK) return ICERR_ERROR;
 
             }
             else {
