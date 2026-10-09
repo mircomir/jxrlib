@@ -15,6 +15,8 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.4.4; 2026/10/09
+  - Fix potential `size_t` overflow in the memory allocation limit check of `calloc_lim`
 - V1.4.3; 2026/09/02
   - `tmpnam` security mitigations:
     - Use a local buffer instead of its internal one
