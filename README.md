@@ -15,6 +15,10 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
+- V1.4.5; 2026/10/15
+  - Fix use-after-free/double-free risk: null out `ctxSC`/`ctxSC_Alpha` after every `ImageStrDecTerm` in `PKImageDecode_Copy_WMP` (reentrant termination/error/rewind and non-reentrant paths), so a later `Copy` or `Release` no longer operates on a dangling decode context
+  - Terminate a still-alive reentrant decode context in `PKImageDecode_Release_WMP`, so an interrupted (partial) decode no longer leaks the decoder state on release
+  - Free the partially-initialized decode context on `ImageStrDecInit`/`StrDecInit` failure, so an allocation error mid-init (OOM / memory limit) no longer leaks the decoder block, lookup tables and sub-allocations
 - V1.4.4; 2026/10/09
   - Fix potential `size_t` overflow in the memory allocation limit check of `calloc_lim`
 - V1.4.3; 2026/09/02

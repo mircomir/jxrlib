@@ -2931,20 +2931,20 @@ Int StrDecInit(CWMImageStrCodec* pSC)
         pSC->pResU = (PixelI *)malloc_lim((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
         pSC->pResV = (PixelI *)malloc_lim((cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI));
         if(pSC->pResU == NULL || pSC->pResV == NULL || (cfExt == YUV_422 ? 128 : 256) * pSC->cmbWidth * sizeof(PixelI) < pSC->cmbWidth){
-            return ICERR_ERROR;
+            goto err;
         }
     }
 
     if(allocatePredInfo(pSC) != ICERR_OK){
-        return ICERR_ERROR;
+        goto err;
     }
 
     if(allocateTileInfo(pSC) != ICERR_OK)
-        return ICERR_ERROR;
+        goto err;
 
     if((pSC->m_param.uQPMode & 1) == 0){ // DC frame uniform quantization
         if(allocateQuantizer(pSC->pTile[0].pQuantizerDC, pSC->m_param.cNumChannels, 1) != ICERR_OK)
-            return ICERR_ERROR;
+            goto err;
         setUniformQuantizer(pSC, 0);
         for(i = 0; i < pSC->m_param.cNumChannels; i ++)
             pSC->pTile[0].pQuantizerDC[i]->iIndex = pSC->m_param.uiQPIndexDC[i];
@@ -2954,7 +2954,7 @@ Int StrDecInit(CWMImageStrCodec* pSC)
     if(pSC->WMISCP.sbSubband != SB_DC_ONLY){
         if((pSC->m_param.uQPMode & 2) == 0){ // LP frame uniform quantization
             if(allocateQuantizer(pSC->pTile[0].pQuantizerLP, pSC->m_param.cNumChannels, 1) != ICERR_OK)
-                return ICERR_ERROR;
+                goto err;
             setUniformQuantizer(pSC, 1);
             if((pSC->m_param.uQPMode & 0x200) == 0) // use DC quantizer
                 useDCQuantizer(pSC, 0);
@@ -2968,7 +2968,7 @@ Int StrDecInit(CWMImageStrCodec* pSC)
         if(pSC->WMISCP.sbSubband != SB_NO_HIGHPASS){
             if((pSC->m_param.uQPMode & 4) == 0){ // HP frame uniform quantization
                 if(allocateQuantizer(pSC->pTile[0].pQuantizerHP, pSC->m_param.cNumChannels, 1) != ICERR_OK)
-                    return ICERR_ERROR;
+                    goto err;
                 setUniformQuantizer(pSC, 2);
 
                 if((pSC->m_param.uQPMode & 0x400) == 0) // use LP quantizer
@@ -2983,7 +2983,7 @@ Int StrDecInit(CWMImageStrCodec* pSC)
     }
 
     if(pSC->WMISCP.cNumOfSliceMinus1V >= MAX_TILES || AllocateCodingContextDec(pSC, pSC->WMISCP.cNumOfSliceMinus1V + 1) != ICERR_OK){
-        return ICERR_ERROR;
+        goto err;
     }
 
     if (pSC->m_bSecondary) {
@@ -2996,6 +2996,24 @@ Int StrDecInit(CWMImageStrCodec* pSC)
     setBitIOPointers(pSC);
 
     return ICERR_OK;
+
+err:
+    // Free the partial state allocated above, if any. The free functions are
+    // NULL-safe, except freeTileInfo which requires pTile to be non-NULL.
+    if (pSC->m_pCodingContext)
+        FreeCodingContextDec(pSC);
+    if (pSC->pTile != NULL)
+        freeTileInfo(pSC);
+    freePredInfo(pSC);
+    if (pSC->pResU != NULL) {
+        free(pSC->pResU);
+        pSC->pResU = NULL;
+    }
+    if (pSC->pResV != NULL) {
+        free(pSC->pResV);
+        pSC->pResV = NULL;
+    }
+    return ICERR_ERROR;
 }
 
 Int StrDecTerm(CWMImageStrCodec* pSC)
@@ -3450,6 +3468,8 @@ Int ImageStrDecInit(
     CWMImageStrCodec SC = {0};
     CWMImageStrCodec *pSC = NULL, *pNextSC = NULL;
     char* pb = NULL;
+    char* pbBase = NULL, *pbNextBase = NULL;
+    Bool bIOInited = FALSE, bScInited = FALSE;
     size_t cb = 0, i;
     // Bool bLossyTranscoding = FALSE;
     Bool bUseHardTileBoundaries = FALSE; //default is soft tile boundaries
@@ -3507,6 +3527,7 @@ Int ImageStrDecInit(
     pb = calloc_lim(1, cb);
     if(pb == NULL)
         return WMP_errOutOfMemory;
+    pbBase = pb;
 
     //================================================
     pSC = (CWMImageStrCodec*)pb; pb += sizeof(*pSC);
@@ -3551,10 +3572,12 @@ Int ImageStrDecInit(
         // 1. allocate new pNextSC info
         //================================================
         cb = sizeof(*pNextSC) + (128 - 1) + cbMacBlockStride * cMacBlock * 2;
-        // if primary image is safe to allocate, alpha channel is certainly safe
         pb = calloc_lim(1, cb);
-        if(pb == NULL)
-            return WMP_errOutOfMemory;
+        if(pb == NULL) {
+            err = WMP_errOutOfMemory;
+            goto Cleanup;
+        }
+        pbNextBase = pb;
         //================================================
         pNextSC = (CWMImageStrCodec*)pb; pb += sizeof(*pNextSC);
 
@@ -3596,7 +3619,9 @@ Int ImageStrDecInit(
 
     //================================================
     FailIf((StrIODecInit(pSC) != ICERR_OK), WMP_errOutOfMemory);
+    bIOInited = TRUE;
     FailIf((StrDecInit(pSC) != ICERR_OK), WMP_errOutOfMemory);
+    bScInited = TRUE;
     if (pNextSC) {
         // 5. StrEncInit
         FailIf((StrDecInit(pNextSC) != ICERR_OK), WMP_errOutOfMemory);
@@ -3617,6 +3642,29 @@ Int ImageStrDecInit(
     PERFTIMER_STOP(pSC->m_fMeasurePerf, pSC->m_ptEncDecPerf);
 
 Cleanup:
+    if (WMP_errSuccess != err) {
+        // Free the partially-initialized context so a failed init leaks nothing
+        if (bScInited) {
+            if (pSC->pResU != NULL) {
+                free(pSC->pResU);
+                pSC->pResU = NULL;
+            }
+            if (pSC->pResV != NULL) {
+                free(pSC->pResV);
+                pSC->pResV = NULL;
+            }
+            freePredInfo(pSC);
+            if (pSC->pTile != NULL)
+                freeTileInfo(pSC);
+            FreeCodingContextDec(pSC);
+        }
+        if (bIOInited)
+            StrIODecTerm(pSC);
+        if (pbNextBase)
+            free(pbNextBase);
+        if (pbBase)
+            free(pbBase);
+    }
     return WMP_errSuccess == err ? ICERR_OK : ICERR_ERROR;
 }
 

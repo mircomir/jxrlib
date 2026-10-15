@@ -2023,6 +2023,7 @@ ERR PKImageDecode_Copy_WMP(
             pID->WMP.cLinesCropped = 0;
             pID->WMP.fFirstNonZeroDecode = FALSE;
             FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC), WMP_errFail);
+            pID->WMP.ctxSC = NULL; // context freed; re-initialized below if we get there
             FailIf(NULL == pID->WMP.wmiSCP.pWStream, WMP_errFail);
             Call(pID->WMP.wmiSCP.pWStream->SetPos(pID->WMP.wmiSCP.pWStream, pID->WMP.cMarker));
             FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI, &pID->WMP.wmiSCP, &pID->WMP.ctxSC), WMP_errFail);
@@ -2053,6 +2054,7 @@ ERR PKImageDecode_Copy_WMP(
             wmiBI.uiLastMBRow = i;
             if (ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC, &wmiBI, &cLinesDecoded)) {
                 ImageStrDecTerm(pID->WMP.ctxSC);
+                pID->WMP.ctxSC = NULL; // context freed: avoid a dangling pointer
                 FailIf(TRUE, WMP_errFail);
             }
             pID->WMP.cLinesDecoded = cLinesDecoded;
@@ -2078,6 +2080,10 @@ ERR PKImageDecode_Copy_WMP(
         // If we're past the top of the image, then we're done, so terminate.
         if ((ULong)linesperMBRow * (cMBRow - 1) >= (U32) pID->WMP.cLinesCropped + pID->WMP.wmiI.cROIHeight) {
             FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC), WMP_errFail);
+            // The context has just been freed: reset the pointer so that a later
+            // Copy (which rewinds through ImageStrDecTerm/Init) does not operate
+            // on a dangling pointer.
+            pID->WMP.ctxSC = NULL;
         }
         pID->WMP.DecoderCurrMBRow = cMBRow; // Set to next possible MBRow that is decodable
 
@@ -2085,6 +2091,7 @@ ERR PKImageDecode_Copy_WMP(
         FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI, &pID->WMP.wmiSCP, &pID->WMP.ctxSC), WMP_errFail);
         FailIf(ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC, &wmiBI), WMP_errFail);
         FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC), WMP_errFail);
+        pID->WMP.ctxSC = NULL; // context freed: avoid a dangling pointer
 #endif //REENTRANT_MODE
 
         if(pID->WMP.bHasAlpha)//planar alpha
@@ -2146,6 +2153,7 @@ ERR PKImageDecode_Copy_WMP(
         {
             pID->WMP.DecoderCurrAlphaMBRow = 0;
             FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC_Alpha), WMP_errFail);
+            pID->WMP.ctxSC_Alpha = NULL; // context freed; re-initialized below if we get there
             FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI_Alpha, &pID->WMP.wmiSCP_Alpha, &pID->WMP.ctxSC_Alpha), WMP_errFail);
         }
 
@@ -2156,6 +2164,7 @@ ERR PKImageDecode_Copy_WMP(
             wmiBI.uiLastMBRow = i;
             if (ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC_Alpha, &wmiBI, &cLinesDecoded)) {
                 ImageStrDecTerm(pID->WMP.ctxSC_Alpha);
+                pID->WMP.ctxSC_Alpha = NULL; // context freed: avoid a dangling pointer
                 FailIf(TRUE, WMP_errFail);
             }
         }
@@ -2163,6 +2172,10 @@ ERR PKImageDecode_Copy_WMP(
         // If we're past the top of the image, then we're done, so terminate
         if ((ULong)linesperMBRow * (cMBRow - 1) >= (U32) pID->WMP.cLinesCropped + pID->WMP.wmiI.cROIHeight) {
             FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC_Alpha), WMP_errFail);
+            // The context has just been freed: reset the pointer so that a later
+            // Copy (which rewinds through ImageStrDecTerm/Init) does not operate
+            // on a dangling pointer.
+            pID->WMP.ctxSC_Alpha = NULL;
         }
         pID->WMP.DecoderCurrAlphaMBRow = cMBRow; // Set to next possible MBRow that is decodable
         wmiBI.pv = pb;
@@ -2170,6 +2183,7 @@ ERR PKImageDecode_Copy_WMP(
         FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI_Alpha, &pID->WMP.wmiSCP_Alpha, &pID->WMP.ctxSC_Alpha), WMP_errFail);
         FailIf(ICERR_OK != ImageStrDecDecode(pID->WMP.ctxSC_Alpha, &wmiBI), WMP_errFail);
         FailIf(ICERR_OK != ImageStrDecTerm(pID->WMP.ctxSC_Alpha), WMP_errFail);
+        pID->WMP.ctxSC_Alpha = NULL; // context freed: avoid a dangling pointer
 #endif //REENTRANT_MODE
     }
 
@@ -2266,6 +2280,18 @@ ERR PKImageDecode_Release_WMP(PKImageDecode** ppID)
         goto Cleanup;
 
     pID = *ppID;
+
+    // Terminate a still-alive reentrant decode context (e.g. the decode was
+    // interrupted before the whole ROI was decoded, or a Copy() failed midway).
+    // ImageStrDecTerm() is a no-op for NULL, so this is safe in all cases.
+    if (pID->WMP.ctxSC) {
+        ImageStrDecTerm(pID->WMP.ctxSC);
+        pID->WMP.ctxSC = NULL;
+    }
+    if (pID->WMP.ctxSC_Alpha) {
+        ImageStrDecTerm(pID->WMP.ctxSC_Alpha);
+        pID->WMP.ctxSC_Alpha = NULL;
+    }
 
     // Free descriptive metadata
     FreeDescMetadata(&pID->WMP.sDescMetadata.pvarImageDescription);
