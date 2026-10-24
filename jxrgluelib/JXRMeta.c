@@ -777,14 +777,12 @@ ERR ReadPropvar(__in_ecount(1) struct WMPStream* pWS,
             }
             else
             {
-                assert(FALSE); // NYI
-                FailIf(TRUE, WMP_errNotYetImplemented);
+                FailIf(TRUE, WMP_errNotYetImplemented);  // an error, not an assert
             }
             break;
 
         default:
-            assert(FALSE); // Unhandled type
-            FailIf(TRUE, WMP_errNotYetImplemented);
+            FailIf(TRUE, WMP_errNotYetImplemented);  // an error, not an assert
             break;
     }
 
