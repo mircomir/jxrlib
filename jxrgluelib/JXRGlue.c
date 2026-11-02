@@ -463,6 +463,14 @@ Cleanup:
         else
             PKFree((void **)&pStream);
     }
+    // On failure, release the half-initialized decoder so the caller gets a NULL
+    // handle: a decoder that failed to initialize must not be reused (its state
+    // is partially set, e.g. wmiI may hold values read from the stream).
+    // NOTE: ppDecoder (not &pDecoder) must be passed, because Release() nulls the
+    // pointer it receives.
+    if (pDecoder && err != WMP_errSuccess) {
+        pDecoder->Release(ppDecoder);
+    }
     return err;
 }
 
