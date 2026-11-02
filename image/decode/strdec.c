@@ -3617,6 +3617,14 @@ Int ImageStrDecInit(
     PERFTIMER_STOP(pSC->m_fMeasurePerf, pSC->m_ptEncDecPerf);
 
 Cleanup:
+    if (WMP_errSuccess != err && pSC != NULL) {
+        // Failure after the context buffers were allocated: free the partially
+        // initialized context (primary and alpha plane) instead of leaking it.
+        pSC->m_pNextSC = pNextSC;
+        StrDecTerm(pSC);
+        free(pSC->m_pNextSC);
+        free(pSC);
+    }
     return WMP_errSuccess == err ? ICERR_OK : ICERR_ERROR;
 }
 
