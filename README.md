@@ -19,6 +19,7 @@ all the most common formats.
   - Fix Null-dereference READ in `freeQuantizer`/`freeTileInfo`
   - Fix Unknown READ in `PKImageDecode_Copy_WMP`
   - Fix memory leak in `ImageStrDecInit` and `PKCodecFactory_CreateDecoderFromFile`
+  - Fix floating-point-exception in `PKImageDecode_Copy_WMP`
 - V1.4.4; 2026/10/09
   - Fix potential `size_t` overflow in the memory allocation limit check of `calloc_lim`
 - V1.4.3; 2026/09/02
