@@ -1976,6 +1976,10 @@ ERR PKImageDecode_Copy_WMP(
     // and I didn't care to get into floating point or a bunch of conditional tests or
     // other rewrite for a case not needed nor tested by PS plugin.  sorry.
     linesperMBRow = 16 / cThumbnailScale;
+    // A thumbnail scale above 16 cannot be handled by the banded decode below
+    // (linesperMBRow would be 0, making the MB row arithmetic divide by zero);
+    // fail cleanly instead of triggering a floating-point exception.
+    FailIf(0 == linesperMBRow, WMP_errFail);
 
 #ifdef REENTRANT_MODE
     if (0 == pID->WMP.DecoderCurrMBRow)
