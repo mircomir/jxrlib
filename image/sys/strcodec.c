@@ -818,6 +818,9 @@ Void freeTileInfo(CWMImageStrCodec * pSC)
 {
     size_t iTile;
 
+    if(pSC->pTile == NULL)
+        return;
+
     if((pSC->m_param.uQPMode & 1) != 0) // not DC uniform
         for(iTile = 0; iTile <= pSC->WMISCP.cNumOfSliceMinus1V; iTile ++)
             freeQuantizer(pSC->pTile[iTile].pQuantizerDC);
@@ -864,7 +867,7 @@ Int allocateQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS], size_t cChannel,
 
 Void freeQuantizer(CWMIQuantizer * pQuantizer[MAX_CHANNELS])
 {
-    if(pQuantizer[0] != NULL) {
+    if(pQuantizer != NULL && pQuantizer[0] != NULL) {
         free(pQuantizer[0]);
         pQuantizer[0] = NULL;
     }
