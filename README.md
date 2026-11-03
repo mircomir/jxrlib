@@ -15,11 +15,16 @@ using KImageFormat's JXR plugin. The test is therefore partial but includes
 all the most common formats.
 
 ### Changelog
-- V1.4.5; 2026/11/02
-  - Fix Null-dereference READ in `freeQuantizer`/`freeTileInfo`
-  - Fix Unknown READ in `PKImageDecode_Copy_WMP`
-  - Fix memory leak in `ImageStrDecInit` and `PKCodecFactory_CreateDecoderFromFile`
-  - Fix floating-point-exception in `PKImageDecode_Copy_WMP`
+
+> [!note]
+> Versions are tagged on Git only after OSS-Fuzz has confirmed that the issue has been resolved.
+
+- V1.4.5; 2026/11/03
+  - Fix Null-dereference READ in `freeQuantizer`/`freeTileInfo` (OSS Fuzz [580512307](https://issues.oss-fuzz.com/issues/580512307))
+  - Fix Unknown READ in `PKImageDecode_Copy_WMP` (OSS Fuzz [581106298](https://issues.oss-fuzz.com/issues/581106298))
+  - Fix memory leak in `ImageStrDecInit` and `PKCodecFactory_CreateDecoderFromFile` (OSS Fuzz [580551353](https://issues.oss-fuzz.com/issues/580551353))
+  - Fix floating-point-exception in `PKImageDecode_Copy_WMP` (OSS Fuzz [580406206](https://issues.oss-fuzz.com/issues/580406206))
+  - Fix caption type conversion in `ParsePFDEntry` (byte captions to `LPWSTR`, ASCII captions as `LPSTR`)
 - V1.4.4; 2026/10/09
   - Fix potential `size_t` overflow in the memory allocation limit check of `calloc_lim`
 - V1.4.3; 2026/09/02
