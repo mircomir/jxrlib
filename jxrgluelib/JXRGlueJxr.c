@@ -1722,11 +1722,10 @@ ERR ParsePFDEntry(
             assert((DPKVT_BYREF | DPKVT_UI1) == pID->WMP.sDescMetadata.pvarCaption.vt);
 
             if (errTmp == WMP_errSuccess) { // sanity check
-                if ((DPKVT_BYREF | DPKVT_UI1) != pID->WMP.sDescMetadata.pvarCaption.vt && uCount >= sizeof(U16) * 2) {
+                if ((DPKVT_BYREF | DPKVT_UI1) == pID->WMP.sDescMetadata.pvarCaption.vt && uCount >= sizeof(U16) * 2) {
                     // Change type from C-style byte array to LPWSTR
                     assert((U8*)pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal ==
                            pID->WMP.sDescMetadata.pvarCaption.VT.pbVal);
-                    assert(0 == pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16) - 1]); // Confirm null-term
                     //  make sure null term (ReadPropvar allocated enough space for this)
                     pID->WMP.sDescMetadata.pvarCaption.VT.pwszVal[uCount/sizeof(U16)] = 0;
                     pID->WMP.sDescMetadata.pvarCaption.vt = DPKVT_LPWSTR;
