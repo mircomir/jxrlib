@@ -19,6 +19,8 @@ all the most common formats.
 > [!note]
 > Versions are tagged on Git only after OSS-Fuzz has confirmed that the issue has been resolved.
 
+- V1.4.6; 2026/11/06
+  - Fix out-of-bounds READ of the LP quantizer in `DecodeMacroblockLowpass` (#67)
 - V1.4.5; 2026/11/03
   - Fix Null-dereference READ in `freeQuantizer`/`freeTileInfo` (OSS Fuzz [580512307](https://issues.oss-fuzz.com/issues/580512307))
   - Fix Unknown READ in `PKImageDecode_Copy_WMP` (OSS Fuzz [581106298](https://issues.oss-fuzz.com/issues/581106298))
