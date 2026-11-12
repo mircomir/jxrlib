@@ -3329,6 +3329,15 @@ EXTERN_C Int WMPhotoValidate(
     if(ImageStrDecGetInfo(&cII, pSCP) != ICERR_OK)
         return ICERR_ERROR;
 
+    // A plane may not claim more pixels than the caller's image.
+    // The header of a planar alpha plane carries its own size, and a file
+    // may claim a much larger one than the image: copying it over into the
+    // image info would make ImageStrDecInit allocate macroblock buffers for
+    // the claimed (huge) size.
+    if(pII->cWidth != 0 && pII->cHeight != 0 &&
+        (cII.cWidth > pII->cWidth || cII.cHeight > pII->cHeight))
+        return ICERR_ERROR;
+
     // copy over un-overwritable ImageInfo parameters
     pII->bdBitDepth = cII.bdBitDepth;
     pII->cWidth = cII.cWidth;
