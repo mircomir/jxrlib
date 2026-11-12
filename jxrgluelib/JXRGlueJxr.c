@@ -2010,6 +2010,13 @@ ERR PKImageDecode_Copy_WMP(
         if (0 == pID->WMP.DecoderCurrMBRow)
         {
             FailIf(NULL == pID->WMP.wmiSCP.pWStream, WMP_errFail);
+            // Re-initialization must start from the beginning of the image
+            // data: after a partial or failed decode the stream is positioned
+            // in the middle of the bitstream, and re-reading the header from
+            // there would parse arbitrary stream bytes as a WMI header (a
+            // crafted file may embed a second WMPHOTO header in the middle
+            // of the bitstream), driving the decoder with bogus dimensions.
+            Call(pID->WMP.wmiSCP.pWStream->SetPos(pID->WMP.wmiSCP.pWStream, pID->WMP.wmiDEMisc.uImageOffset));
             Call(pID->WMP.wmiSCP.pWStream->GetPos(pID->WMP.wmiSCP.pWStream, &(pID->WMP.cMarker)));
             FailIf(ICERR_OK != ImageStrDecInit(&pID->WMP.wmiI, &pID->WMP.wmiSCP, &pID->WMP.ctxSC), WMP_errFail);
         }

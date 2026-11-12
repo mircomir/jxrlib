@@ -22,6 +22,7 @@ all the most common formats.
 - V1.4.7; 2026/11/12
   - Fix huge memory allocation for an oversized planar alpha plane in `WMPhotoValidate`
   - Reject plane size claims beyond 2^28 per side in `ReadWMIHeader`
+  - Fix stale stream position on decoder re-init in `PKImageDecode_Copy_WMP`
 - V1.4.6; 2026/11/06
   - Fix out-of-bounds READ of the LP quantizer in `DecodeMacroblockLowpass` (#67)
 - V1.4.5; 2026/11/03
