@@ -19,6 +19,9 @@ all the most common formats.
 > [!note]
 > Versions are tagged on Git only after OSS-Fuzz has confirmed that the issue has been resolved.
 
+- V1.4.7; 2026/11/12
+  - Fix huge memory allocation for an oversized planar alpha plane in `WMPhotoValidate`
+  - Reject plane size claims beyond 2^28 per side in `ReadWMIHeader`
 - V1.4.6; 2026/11/06
   - Fix out-of-bounds READ of the LP quantizer in `DecodeMacroblockLowpass` (#67)
 - V1.4.5; 2026/11/03

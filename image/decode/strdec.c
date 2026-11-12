@@ -3234,6 +3234,10 @@ Int ReadWMIHeader(
 // size
     pII->cWidth = getBit32_SB(pSB, bAbbreviatedHeader ? 16 : 32) + 1;
     pII->cHeight = getBit32_SB(pSB, bAbbreviatedHeader ? 16 : 32) + 1;
+    // The encoder caps each side at 2^28 (ValidateArgs in strenc.c), while
+    // the header fields can express more: reject larger claims at parse
+    // time, before any size-driven allocation.
+    FailIf(pII->cWidth > (1 << 28) || pII->cHeight > (1 << 28), WMP_errUnsupportedFormat);
     pSC->cExtraPixelsTop = pSC->cExtraPixelsLeft = pSC->cExtraPixelsBottom = pSC->cExtraPixelsRight = 0;
     if (bInscribed == FALSE && (pII->cWidth & 0xf) != 0)
         pSC->cExtraPixelsRight = 0x10 - (pII->cWidth & 0xF);
@@ -3327,6 +3331,15 @@ EXTERN_C Int WMPhotoValidate(
     size_t cScale = 1;
 
     if(ImageStrDecGetInfo(&cII, pSCP) != ICERR_OK)
+        return ICERR_ERROR;
+
+    // A plane may not claim more pixels than the caller's image.
+    // The header of a planar alpha plane carries its own size, and a file
+    // may claim a much larger one than the image: copying it over into the
+    // image info would make ImageStrDecInit allocate macroblock buffers for
+    // the claimed (huge) size.
+    if(pII->cWidth != 0 && pII->cHeight != 0 &&
+        (cII.cWidth > pII->cWidth || cII.cHeight > pII->cHeight))
         return ICERR_ERROR;
 
     // copy over un-overwritable ImageInfo parameters
