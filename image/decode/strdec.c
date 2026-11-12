@@ -3234,6 +3234,10 @@ Int ReadWMIHeader(
 // size
     pII->cWidth = getBit32_SB(pSB, bAbbreviatedHeader ? 16 : 32) + 1;
     pII->cHeight = getBit32_SB(pSB, bAbbreviatedHeader ? 16 : 32) + 1;
+    // The encoder caps each side at 2^28 (ValidateArgs in strenc.c), while
+    // the header fields can express more: reject larger claims at parse
+    // time, before any size-driven allocation.
+    FailIf(pII->cWidth > (1 << 28) || pII->cHeight > (1 << 28), WMP_errUnsupportedFormat);
     pSC->cExtraPixelsTop = pSC->cExtraPixelsLeft = pSC->cExtraPixelsBottom = pSC->cExtraPixelsRight = 0;
     if (bInscribed == FALSE && (pII->cWidth & 0xf) != 0)
         pSC->cExtraPixelsRight = 0x10 - (pII->cWidth & 0xF);
