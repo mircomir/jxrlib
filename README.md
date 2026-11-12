@@ -22,6 +22,7 @@ all the most common formats.
 - V1.4.7; 2026/11/12
   - Fix huge memory allocation for an oversized planar alpha plane in `WMPhotoValidate`
   - Reject plane size claims beyond 2^28 per side in `ReadWMIHeader`
+  - Fix stale stream position on decoder re-init in `PKImageDecode_Copy_WMP` (the header was re-read from the middle of the bitstream after a failed or partial `Copy`, so a second `WMPHOTO` header embedded in the stream was re-parsed as a bogus image, causing out-of-bounds reads in `decodeThumbnail` and an infinite macroblock-row loop)
 - V1.4.6; 2026/11/06
   - Fix out-of-bounds READ of the LP quantizer in `DecodeMacroblockLowpass` (#67)
 - V1.4.5; 2026/11/03
